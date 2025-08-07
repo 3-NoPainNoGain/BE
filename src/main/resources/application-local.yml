@@ -1,4 +1,0 @@
-spring:
-  data:
-    mongodb:
-      uri: mongodb://root:${LOCAL_MONGO_PASS}@localhost:27017/handdoc?authSource=admin
