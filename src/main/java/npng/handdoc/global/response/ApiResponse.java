@@ -11,7 +11,7 @@ public record ApiResponse<T>(Boolean isSuccess, String code, String message, T r
                     .isSuccess(true)
                     .code("REQUEST_OK")
                     .message("요청이 승인되었습니다.")
-                    .results(Collections.EMPTY_MAP)
+                    .results(Collections.emptyMap())
                     .build();
 
     public static final ApiResponse<Object> JSON_ROLE_ERROR =
@@ -19,7 +19,7 @@ public record ApiResponse<T>(Boolean isSuccess, String code, String message, T r
                     .isSuccess(false)
                     .code("JSON_ROLE_ERROR")
                     .message("가진 권한으로는 실행할 수 없는 기능입니다.")
-                    .results(Collections.EMPTY_MAP)
+                    .results(Collections.emptyMap())
                     .build();
 
     public static final ApiResponse<Object> JSON_AUTH_ERROR =
@@ -27,7 +27,7 @@ public record ApiResponse<T>(Boolean isSuccess, String code, String message, T r
                     .isSuccess(false)
                     .code("JSON_AUTH_ERROR")
                     .message("로그인 후 다시 접근해주시기 바랍니다.")
-                    .results(Collections.EMPTY_MAP)
+                    .results(Collections.emptyMap())
                     .build();
 
     public static <T> ApiResponse<Object> from(T dto) {
