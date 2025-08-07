@@ -30,7 +30,7 @@ public record ApiResponse<T>(Boolean isSuccess, String code, String message, T r
                     .results(Collections.emptyMap())
                     .build();
 
-    public static <T> ApiResponse<T> from(T dto) {
+    public static <T> ApiResponse<Object> from(T dto) {
         return ApiResponse.builder()
                 .isSuccess(true)
                 .code("REQUEST_OK")
