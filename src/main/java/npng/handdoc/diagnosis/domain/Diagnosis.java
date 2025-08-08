@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import npng.handdoc.diagnosis.domain.type.DiagnosisStatus;
 import npng.handdoc.global.entity.BaseDocument;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -22,6 +23,9 @@ public class Diagnosis extends BaseDocument {
 
     @Id
     private String id;
+
+    @Builder.Default
+    private DiagnosisStatus status = DiagnosisStatus.ACTIVE;
 
     private List<ChatLog> chatLogList = new ArrayList<>();
 
