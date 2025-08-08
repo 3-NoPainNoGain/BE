@@ -23,10 +23,6 @@ public class DiagnosisController {
 
     @PostMapping("/start")
     @Operation(summary = "진료 세션 시작 API", description = "진료 시작 버튼을 눌렀을 때 호출하는 API입니다. 새로운 진료 Id를 발급하며, 생성된 진료는 1일(24시간) 후 자동 만료됩니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "진료 세션이 성공적으로 시작됨"),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
-    })
     public ResponseEntity<StartDiagnosisRes> start(){
         Diagnosis diagnosis = diagnosisService.startDiagnosis();
         return ResponseEntity.ok(StartDiagnosisRes.of(diagnosis.getId()));
