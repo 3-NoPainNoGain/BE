@@ -35,4 +35,11 @@ public class Diagnosis extends BaseDocument {
     public void addChatLog(ChatLog chatLog) {
         this.chatLogList.add(chatLog);
     }
+
+    public boolean isActive() { return this.status == DiagnosisStatus.ACTIVE; }
+
+    public void endNow() {
+        if (!isActive()) return;
+        this.status = DiagnosisStatus.ENDED;
+    }
 }
