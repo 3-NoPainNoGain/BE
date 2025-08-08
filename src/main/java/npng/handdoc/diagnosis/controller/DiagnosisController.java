@@ -7,10 +7,7 @@ import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.dto.response.StartDiagnosisRes;
 import npng.handdoc.diagnosis.service.DiagnosisService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static npng.handdoc.global.response.ApiResponse.EMPTY_RESPONSE;
 
@@ -29,9 +26,9 @@ public class DiagnosisController {
         return ResponseEntity.ok(StartDiagnosisRes.of(diagnosis.getId()));
     }
 
-    @PostMapping("/end")
+    @PatchMapping("/{diagnosisId}/end")
     @Operation(summary = "진료 세션 종료 API", description = "진료 종료 버튼을 눌렀을 때 호출하는 API입니다. 진료 Id를 입력해주세요.")
-    public ResponseEntity<Object> end(@RequestParam String diagnosisId){
+    public ResponseEntity<Object> end(@PathVariable String diagnosisId){
         diagnosisService.endDiagnosis(diagnosisId);
         return ResponseEntity.ok(EMPTY_RESPONSE);
     }

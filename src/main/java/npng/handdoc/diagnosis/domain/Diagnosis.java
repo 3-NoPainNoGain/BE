@@ -32,8 +32,11 @@ public class Diagnosis extends BaseDocument {
     @Indexed(name = "expiredAt")
     private LocalDateTime expiredAt;
 
+    private LocalDateTime endedAt;
+
     public void addChatLog(ChatLog chatLog) {
         this.chatLogList.add(chatLog);
+        this.endedAt = LocalDateTime.now();
     }
 
     public boolean isActive() { return this.status == DiagnosisStatus.ACTIVE; }
@@ -41,5 +44,6 @@ public class Diagnosis extends BaseDocument {
     public void endNow() {
         if (!isActive()) return;
         this.status = DiagnosisStatus.ENDED;
+        this.endedAt = LocalDateTime.now();
     }
 }
