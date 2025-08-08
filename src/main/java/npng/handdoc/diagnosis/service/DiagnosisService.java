@@ -2,8 +2,8 @@ package npng.handdoc.diagnosis.service;
 
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.Diagnosis;
-import npng.handdoc.diagnosis.excpetion.DiagnosisException;
-import npng.handdoc.diagnosis.excpetion.errorcode.DiagnosisErrorCode;
+import npng.handdoc.diagnosis.exception.DiagnosisException;
+import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
 import org.springframework.stereotype.Service;
 

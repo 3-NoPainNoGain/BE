@@ -1,4 +1,4 @@
-package npng.handdoc.diagnosis.excpetion;
+package npng.handdoc.diagnosis.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
