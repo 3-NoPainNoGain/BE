@@ -27,6 +27,7 @@ public class Diagnosis extends BaseDocument {
     @Builder.Default
     private DiagnosisStatus status = DiagnosisStatus.ACTIVE;
 
+    @Builder.Default
     private List<ChatLog> chatLogList = new ArrayList<>();
 
     @Indexed(name = "expiredAt")

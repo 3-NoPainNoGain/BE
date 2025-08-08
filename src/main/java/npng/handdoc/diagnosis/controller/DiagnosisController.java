@@ -2,8 +2,10 @@ package npng.handdoc.diagnosis.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.Diagnosis;
+import npng.handdoc.diagnosis.dto.request.SignLogReq;
 import npng.handdoc.diagnosis.dto.response.StartDiagnosisRes;
 import npng.handdoc.diagnosis.service.DiagnosisService;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,13 @@ public class DiagnosisController {
     @Operation(summary = "진료 세션 종료 API", description = "진료 종료 버튼을 눌렀을 때 호출하는 API입니다. 진료 Id를 입력해주세요.")
     public ResponseEntity<Object> end(@PathVariable String diagnosisId){
         diagnosisService.endDiagnosis(diagnosisId);
+        return ResponseEntity.ok(EMPTY_RESPONSE);
+    }
+
+    @PostMapping("/{diagnosisId}/sign")
+    @Operation(summary = "텍스트로 변환된 수어 저장 API", description = "환자의 전송 버튼 클릭시 호출하는 API입니다. 진료 Id를 입력해주세요.")
+    public ResponseEntity<Object> sign(@PathVariable String diagnosisId, @Valid @RequestBody SignLogReq request){
+        diagnosisService.saveSignText(diagnosisId,request);
         return ResponseEntity.ok(EMPTY_RESPONSE);
     }
 }
