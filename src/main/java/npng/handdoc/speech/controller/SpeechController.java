@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import npng.handdoc.speech.client.NaverCsrClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -20,9 +17,9 @@ public class SpeechController {
 
     private final NaverCsrClient naverCsrClient;
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "음성을 텍스트로 변환하는 API", description = "음성 파일을 업로드하여 호출합니다.")
-    public ResponseEntity<String> stt(@RequestParam("file") MultipartFile file) throws Exception{
+    public ResponseEntity<String> stt(@RequestPart("file") MultipartFile file) throws Exception{
         String result = naverCsrClient.transcribe(file.getBytes());
         return ResponseEntity.ok(result);
     }
