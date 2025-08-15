@@ -6,8 +6,3 @@ spring:
   data:
     mongodb:
       uri: mongodb://${DOCKER_MONGO_USERNAME}:${DOCKER_MONGO_PASSWORD}@localhost:37017/${MONGO_DB_NAME}?authSource=admin
-
-naver:
-  clova:
-    api-key-id: ${CLOVA_API_KEY_ID}
-    api-key: ${CLOVA_API_KEY}
