@@ -1,5 +1,8 @@
 spring:
   config:
     import: optional:file:.env[.properties]
-  profiles:
-    active: local
+
+naver:
+  clova:
+    api-key-id: ${CLOVA_API_KEY_ID}
+    api-key: ${CLOVA_API_KEY}
