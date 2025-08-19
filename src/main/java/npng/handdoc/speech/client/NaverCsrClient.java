@@ -1,6 +1,7 @@
 package npng.handdoc.speech.client;
 
 import lombok.RequiredArgsConstructor;
+import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class NaverCsrClient {
 
     private static final String DEFAULT_LANG = "Kor";
 
-    public String transcribe(byte[] audioBytes){
+    public ClovaCsrRes transcribe(byte[] audioBytes){
         return webClient.post()
                 .uri(uri -> uri.scheme("https")
                         .host("naveropenapi.apigw.ntruss.com")
@@ -39,7 +40,7 @@ public class NaverCsrClient {
                         resp -> resp.bodyToMono(String.class)
                                 .defaultIfEmpty("")
                                 .flatMap(msg-> Mono.error(new IllegalStateException("Clova CSR Error: " + msg))))
-                .bodyToMono(String.class)
+                .bodyToMono(ClovaCsrRes.class)
                 .timeout(Duration.ofSeconds(20))
                 .block();
     }

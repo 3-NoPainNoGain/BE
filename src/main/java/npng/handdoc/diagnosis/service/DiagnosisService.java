@@ -6,6 +6,7 @@ import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.domain.type.MessageType;
 import npng.handdoc.diagnosis.domain.type.Sender;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
+import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
@@ -58,15 +59,16 @@ public class DiagnosisService {
     public String saveSpeechText(String diagnosisId, MultipartFile file) throws IOException {
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
         validateActive(diagnosis);
-        String speechText = naverCsrClient.transcribe(file.getBytes());
+        ClovaCsrRes speechText = naverCsrClient.transcribe(file.getBytes());
+        String text = speechText.text();
         ChatLog chatLog = ChatLog.builder()
                 .sender(Sender.DOCTOR)
                 .messageType(MessageType.STT)
-                .message(speechText)
+                .message(text)
                 .build();
         diagnosis.addChatLog(chatLog);
         diagnosisRepository.save(diagnosis);
-        return speechText;
+        return text;
     }
 
     private Diagnosis findDiagnosisOrThrow(String diagnosisId){
