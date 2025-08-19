@@ -1,0 +1,38 @@
+name: 🚀 CD - Deploy to EC2 (Blue/Green)
+
+on:
+  workflow_run:
+    workflows: ["🧪 CI - Build & Push Docker Image"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # CI가 성공했을 때만 배포
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: 🧮 Pick image tag from CI run
+        id: pick
+        run: echo "tag=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: ✈️ SSH to EC2 & run deploy.sh
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            IMAGE="${{ secrets.DOCKER_USERNAME }}/handdoc-backend"
+            TAG="${{ steps.pick.outputs.tag }}"
+            echo "[INFO] Deploying ${IMAGE}:${TAG}"
+            bash /home/ec2-user/apps/deploy.sh "$IMAGE" "$TAG"
