@@ -10,3 +10,9 @@ naver:
   clova:
     api-key-id: ${CLOVA_API_KEY_ID}
     api-key: ${CLOVA_API_KEY}
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
