@@ -9,6 +9,7 @@ import npng.handdoc.diagnosis.dto.request.SignLogReq;
 import npng.handdoc.diagnosis.dto.response.StartDiagnosisRes;
 import npng.handdoc.diagnosis.service.DiagnosisService;
 import npng.handdoc.speech.client.NaverCsrClient;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +46,7 @@ public class DiagnosisController {
         return ResponseEntity.ok(EMPTY_RESPONSE);
     }
 
-    @PostMapping("/{diagnosisId}/speech")
+    @PostMapping(value = "/{diagnosisId}/speech", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "음성을 텍스트로 변환하고 DB에 저장하는 API", description = "음성 파일을 업로드하여 호출합니다.")
     public ResponseEntity<String> stt(@PathVariable String diagnosisId,
                                       @RequestPart("file") MultipartFile file) throws Exception{
