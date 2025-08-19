@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: prod
-
   data:
     mongodb:
-      uri: ${PROD_MONGODB_URI}
+      uri: ${MONGODB_URI}

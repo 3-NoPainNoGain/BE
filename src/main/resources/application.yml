@@ -1,8 +1,10 @@
 spring:
+  application:
+    name: handdoc
   config:
     import: optional:file:.env[.properties]
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:local}
 
 naver:
   clova:
