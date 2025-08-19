@@ -12,14 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Speech", description = "음성 관련 API")
-@RequestMapping("/api/v1/stt")
 public class SpeechController {
 
     private final NaverCsrClient naverCsrClient;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "음성을 텍스트로 변환하는 API", description = "음성 파일을 업로드하여 호출합니다.")
-    public ResponseEntity<String> stt(@RequestPart("file") MultipartFile file) throws Exception{
+    @PostMapping(name = "api/v1/diagnosis/{diagnosisId}/stt",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "음성을 텍스트로 변환하고 DB에 저장하는 API", description = "음성 파일을 업로드하여 호출합니다.")
+    public ResponseEntity<String> stt(@PathVariable String diagnosisId,
+                                      @RequestPart("file") MultipartFile file) throws Exception{
         String result = naverCsrClient.transcribe(file.getBytes());
         return ResponseEntity.ok(result);
     }
