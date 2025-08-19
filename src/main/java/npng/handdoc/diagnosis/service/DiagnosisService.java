@@ -6,11 +6,16 @@ import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.domain.type.MessageType;
 import npng.handdoc.diagnosis.domain.type.Sender;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
+import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
+import npng.handdoc.speech.client.NaverCsrClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service
@@ -18,6 +23,7 @@ import java.time.LocalDateTime;
 public class DiagnosisService {
 
     private final DiagnosisRepository diagnosisRepository;
+    private final NaverCsrClient naverCsrClient;
 
     // 진료 시작
     public Diagnosis startDiagnosis(){
@@ -46,6 +52,23 @@ public class DiagnosisService {
 
         diagnosis.addChatLog(chatLog);
         diagnosisRepository.save(diagnosis);
+    }
+
+    // 음성 -> 텍스트 변환 후 저장
+    @Transactional
+    public String saveSpeechText(String diagnosisId, MultipartFile file) throws IOException {
+        Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
+        validateActive(diagnosis);
+        ClovaCsrRes speechText = naverCsrClient.transcribe(file.getBytes());
+        String text = speechText.text();
+        ChatLog chatLog = ChatLog.builder()
+                .sender(Sender.DOCTOR)
+                .messageType(MessageType.STT)
+                .message(text)
+                .build();
+        diagnosis.addChatLog(chatLog);
+        diagnosisRepository.save(diagnosis);
+        return text;
     }
 
     private Diagnosis findDiagnosisOrThrow(String diagnosisId){

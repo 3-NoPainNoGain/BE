@@ -7,9 +7,13 @@ import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
 import npng.handdoc.diagnosis.dto.response.StartDiagnosisRes;
+import npng.handdoc.diagnosis.dto.response.SttResultRes;
 import npng.handdoc.diagnosis.service.DiagnosisService;
+import npng.handdoc.speech.client.NaverCsrClient;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static npng.handdoc.global.response.ApiResponse.EMPTY_RESPONSE;
 
@@ -20,6 +24,7 @@ import static npng.handdoc.global.response.ApiResponse.EMPTY_RESPONSE;
 public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
+    private final NaverCsrClient naverCsrClient;
 
     @PostMapping("/start")
     @Operation(summary = "진료 세션 시작 API", description = "진료 시작 버튼을 눌렀을 때 호출하는 API입니다. 새로운 진료 Id를 발급하며, 생성된 진료는 1일(24시간) 후 자동 만료됩니다.")
@@ -40,5 +45,13 @@ public class DiagnosisController {
     public ResponseEntity<Object> sign(@PathVariable String diagnosisId, @Valid @RequestBody SignLogReq request){
         diagnosisService.saveSignText(diagnosisId,request);
         return ResponseEntity.ok(EMPTY_RESPONSE);
+    }
+
+    @PostMapping(value = "/{diagnosisId}/speech", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "음성을 텍스트로 변환하고 DB에 저장하는 API", description = "음성 파일을 업로드하여 호출합니다.")
+    public ResponseEntity<SttResultRes> stt(@PathVariable String diagnosisId,
+                                      @RequestPart("file") MultipartFile file) throws Exception{
+        String result = diagnosisService.saveSpeechText(diagnosisId, file);
+        return ResponseEntity.ok(SttResultRes.of(result));
     }
 }
