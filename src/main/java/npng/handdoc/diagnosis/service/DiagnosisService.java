@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -69,6 +70,21 @@ public class DiagnosisService {
         diagnosis.addChatLog(chatLog);
         diagnosisRepository.save(diagnosis);
         return text;
+    }
+
+    // 진료 시간 계산
+    private String calculateTime(Diagnosis diagnosis){
+        LocalDateTime start = diagnosis.getCreatedAt();
+        LocalDateTime end = diagnosis.getEndedAt();
+        return toHHMMSS(Duration.between(start, end));
+    }
+
+    private static String toHHMMSS(Duration d) {
+        long seconds = d.getSeconds();
+        long h = seconds / 3600;
+        long m = (seconds % 3600) / 60;
+        long s = seconds % 60;
+        return String.format("%02d:%02d:%02d", h, m, s);
     }
 
     private Diagnosis findDiagnosisOrThrow(String diagnosisId){
