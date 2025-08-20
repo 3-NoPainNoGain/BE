@@ -1,4 +1,4 @@
-package npng.handdoc.speech.client;
+package npng.handdoc.diagnosis.client;
 
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;

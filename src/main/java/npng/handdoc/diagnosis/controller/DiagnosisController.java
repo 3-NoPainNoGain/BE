@@ -9,7 +9,7 @@ import npng.handdoc.diagnosis.dto.request.SignLogReq;
 import npng.handdoc.diagnosis.dto.response.StartDiagnosisRes;
 import npng.handdoc.diagnosis.dto.response.SttResultRes;
 import npng.handdoc.diagnosis.service.DiagnosisService;
-import npng.handdoc.speech.client.NaverCsrClient;
+import npng.handdoc.diagnosis.client.NaverCsrClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

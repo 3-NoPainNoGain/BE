@@ -10,7 +10,7 @@ import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
-import npng.handdoc.speech.client.NaverCsrClient;
+import npng.handdoc.diagnosis.client.NaverCsrClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
