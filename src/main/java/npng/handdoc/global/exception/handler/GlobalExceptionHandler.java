@@ -2,6 +2,7 @@ package npng.handdoc.global.exception.handler;
 
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
+import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.global.exception.errorcode.ErrorCode;
 import npng.handdoc.global.exception.errorcode.GlobalErrorCode;
 import npng.handdoc.global.exception.response.ErrorResponse;
@@ -31,12 +32,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * handleMemberNotFound(final UserNotFoundException e) { return
      * handleExceptionInternal(e.getErrorCode()); }
      */
-//    @ExceptionHandler(AuthException.class)
-//    public ResponseEntity<Object> handleAuthException(
-//            final AuthException e, HttpServletRequest request) {
-//        logInfo(e.getErrorCode(), e, request);
-//        return handleExceptionInternal(e.getErrorCode());
-//    }
+    @ExceptionHandler(DiagnosisException.class)
+    public ResponseEntity<Object> handleAuthException(
+            final DiagnosisException e, HttpServletRequest request) {
+        logInfo(e.getErrorCode(), e, request);
+        return handleExceptionInternal(e.getErrorCode());
+    }
 
     /**
      * @Valid 관련 예외 처리 (DTO 검증 실패 시 발생)
