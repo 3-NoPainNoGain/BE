@@ -6,12 +6,14 @@ import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.domain.type.MessageType;
 import npng.handdoc.diagnosis.domain.type.Sender;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
+import npng.handdoc.diagnosis.dto.response.SummaryAIRes;
 import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
 import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
 import npng.handdoc.diagnosis.util.naver.NaverCsrClient;
+import npng.handdoc.diagnosis.util.openai.service.OpenAIService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +28,7 @@ public class DiagnosisService {
 
     private final DiagnosisRepository diagnosisRepository;
     private final NaverCsrClient naverCsrClient;
+    private final OpenAIService openAIService;
 
     // 진료 시작
     @Transactional
@@ -80,7 +83,9 @@ public class DiagnosisService {
     @Transactional
     public SummaryRes getSummary(String diagnosisId){
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
-        return null;
+        SummaryAIRes summaryAIRes = openAIService.summarize(diagnosis);
+        String consultationTime = calculateTime(diagnosis);
+        return SummaryRes.of(consultationTime, summaryAIRes.symptom(), summaryAIRes.impression(), summaryAIRes.prescription());
     }
 
     // 진료 시간 계산
