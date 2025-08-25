@@ -7,10 +7,11 @@ import npng.handdoc.diagnosis.domain.type.MessageType;
 import npng.handdoc.diagnosis.domain.type.Sender;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
 import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
+import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
-import npng.handdoc.diagnosis.client.NaverCsrClient;
+import npng.handdoc.diagnosis.util.NaverCsrClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ public class DiagnosisService {
     private final NaverCsrClient naverCsrClient;
 
     // 진료 시작
+    @Transactional
     public Diagnosis startDiagnosis(){
         Diagnosis diagnosis = Diagnosis.builder()
                 .expiredAt(LocalDateTime.now().plusDays(1))
@@ -35,6 +37,7 @@ public class DiagnosisService {
     }
 
     // 진료 종료
+    @Transactional
     public void endDiagnosis(String diagnosisId){
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
         diagnosis.endNow();
@@ -42,6 +45,7 @@ public class DiagnosisService {
     }
 
     // 수어 등록
+    @Transactional
     public void saveSignText(String diagnosisId, SignLogReq request){
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
         validateActive(diagnosis);
@@ -70,6 +74,13 @@ public class DiagnosisService {
         diagnosis.addChatLog(chatLog);
         diagnosisRepository.save(diagnosis);
         return text;
+    }
+
+    // 진료 내용 요약
+    @Transactional
+    public SummaryRes getSummary(String diagnosisId){
+        Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
+        return null;
     }
 
     // 진료 시간 계산
