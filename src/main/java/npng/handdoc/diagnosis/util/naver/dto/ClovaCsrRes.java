@@ -1,4 +1,4 @@
-package npng.handdoc.diagnosis.dto.response;
+package npng.handdoc.diagnosis.util.naver.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

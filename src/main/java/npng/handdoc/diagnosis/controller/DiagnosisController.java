@@ -8,8 +8,8 @@ import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
 import npng.handdoc.diagnosis.dto.response.StartDiagnosisRes;
 import npng.handdoc.diagnosis.dto.response.SttResultRes;
+import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.diagnosis.service.DiagnosisService;
-import npng.handdoc.speech.client.NaverCsrClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,6 @@ import static npng.handdoc.global.response.ApiResponse.EMPTY_RESPONSE;
 public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
-    private final NaverCsrClient naverCsrClient;
 
     @PostMapping("/start")
     @Operation(summary = "진료 세션 시작 API", description = "진료 시작 버튼을 눌렀을 때 호출하는 API입니다. 새로운 진료 Id를 발급하며, 생성된 진료는 1일(24시간) 후 자동 만료됩니다.")
@@ -53,5 +52,12 @@ public class DiagnosisController {
                                       @RequestPart("file") MultipartFile file) throws Exception{
         String result = diagnosisService.saveSpeechText(diagnosisId, file);
         return ResponseEntity.ok(SttResultRes.of(result));
+    }
+
+    @GetMapping("/{diagnosisId}/summary")
+    @Operation(summary = "진료를 요약하는 API", description = "진료 내용을 요약해줍니다. 진료 Id를 입력해주세요.")
+    public ResponseEntity<SummaryRes> summary(@PathVariable String diagnosisId){
+        SummaryRes summary = diagnosisService.getSummary(diagnosisId);
+        return ResponseEntity.ok(summary);
     }
 }

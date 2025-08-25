@@ -11,6 +11,10 @@ naver:
     api-key-id: ${CLOVA_API_KEY_ID}
     api-key: ${CLOVA_API_KEY}
 
+openai:
+  api:
+    key: ${OPEN_API_KEY}
+
 management:
   endpoint:
     health:
