@@ -6,7 +6,7 @@ import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.domain.type.MessageType;
 import npng.handdoc.diagnosis.domain.type.Sender;
 import npng.handdoc.diagnosis.dto.request.SignLogReq;
-import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
+import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
 import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
