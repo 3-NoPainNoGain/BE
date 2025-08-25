@@ -11,7 +11,7 @@ import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
-import npng.handdoc.diagnosis.util.NaverCsrClient;
+import npng.handdoc.diagnosis.util.naver.NaverCsrClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,4 +1,4 @@
-package npng.handdoc.diagnosis.util;
+package npng.handdoc.diagnosis.util.naver;
 
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.dto.response.ClovaCsrRes;
