@@ -22,10 +22,10 @@ public class OpenAIApiClient {
 
     private final WebClient webClient;
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String DEFAULT_MODEL = "gpt-4o-mini";   // 필요하면 프로퍼티로 뺄 수 있음
+    private static final String DEFAULT_MODEL = "gpt-4o-mini";
     private static final long TIMEOUT_SECONDS = 15;
 
-    @Value("${openai.api.key")
+    @Value("${openai.api.key}")
     private String apiKey;
 
     public Mono<String> chatToJson(List<Message> messages) {
