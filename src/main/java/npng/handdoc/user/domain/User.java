@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import npng.handdoc.global.entity.BaseEntity;
 import npng.handdoc.user.domain.type.Role;
-import org.springframework.data.annotation.Id;
 
 @Getter
+@Entity
+@Table(name="users")
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
