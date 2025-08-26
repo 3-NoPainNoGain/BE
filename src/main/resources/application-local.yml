@@ -1,4 +1,9 @@
 spring:
+  datasource:
+    url: ${LOCAL_DB_URL}
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
+
   data:
     mongodb:
       uri: mongodb://${DOCKER_MONGO_USERNAME}:${DOCKER_MONGO_PASSWORD}@localhost:37017/${MONGO_DB_NAME}?authSource=admin
