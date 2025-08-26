@@ -1,7 +1,11 @@
 package npng.handdoc.auth.exception;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import npng.handdoc.global.exception.errorcode.ErrorCode;
+
+@Getter
+@RequiredArgsConstructor
 public class AuthException extends RuntimeException {
-  public AuthException(String message) {
-    super(message);
-  }
+    private final ErrorCode errorCode;
 }
