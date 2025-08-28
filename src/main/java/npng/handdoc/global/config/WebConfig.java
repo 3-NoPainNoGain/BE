@@ -13,7 +13,9 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000") // 추후에 더 추가
+                        .allowedOrigins("http://localhost:3000",
+                                "https://handdoc.store",
+                                "https://www.handdoc.store") // 추후에 더 추가
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
