@@ -83,6 +83,7 @@ public class DiagnosisService {
     @Transactional
     public SummaryRes getSummary(String diagnosisId){
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
+        validateInactive(diagnosis);
         SummaryAIRes summaryAIRes = openAIService.summarize(diagnosis);
         String consultationTime = calculateTime(diagnosis);
         return SummaryRes.of(consultationTime, summaryAIRes.symptom(), summaryAIRes.impression(), summaryAIRes.prescription());
@@ -111,6 +112,12 @@ public class DiagnosisService {
     private void validateActive(Diagnosis diagnosis) {
         if (!diagnosis.isActive()) {
             throw new DiagnosisException(DiagnosisErrorCode.DIAGNOSIS_ALREADY_ENDED);
+        }
+    }
+
+    private void validateInactive(Diagnosis diagnosis) {
+        if (diagnosis.isActive()) {
+            throw new DiagnosisException(DiagnosisErrorCode.DIAGNOSIS_NOT_ENDED);
         }
     }
 }
