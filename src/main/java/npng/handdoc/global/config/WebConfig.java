@@ -16,7 +16,7 @@ public class WebConfig {
                         .allowedOrigins("http://localhost:3000",
                                 "https://handdoc.store",
                                 "https://www.handdoc.store") // 추후에 더 추가
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
