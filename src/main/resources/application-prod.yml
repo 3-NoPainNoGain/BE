@@ -2,3 +2,7 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
+
+swagger:
+  server:
+    url: ${SWAGGER_URL}
