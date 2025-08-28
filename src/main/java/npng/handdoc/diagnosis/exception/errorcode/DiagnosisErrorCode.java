@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum DiagnosisErrorCode implements ErrorCode {
     DIAGNOSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 진료가 없습니다."),
     DIAGNOSIS_ALREADY_ENDED(HttpStatus.CONFLICT, "이미 종료된 진료입니다."),
+    DIAGNOSIS_NOT_ENDED(HttpStatus.BAD_REQUEST, "아직 종료되지 않은 진료입니다.")
     ;
 
     private final HttpStatus httpStatus;
