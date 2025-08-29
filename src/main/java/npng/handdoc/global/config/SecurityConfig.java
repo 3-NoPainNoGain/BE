@@ -58,12 +58,13 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(
                 Arrays.asList(
-                        "http://localhost:3000"));
+                        "http://localhost:3000",
+                        "https://handdoc.store",
+                        "https://www.handdoc.store")); // 추후에 추가
         configuration.setAllowedMethods(
-                Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(
-                Arrays.asList(
-                        "X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token", "Accept"));
+                Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token", "Accept"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
