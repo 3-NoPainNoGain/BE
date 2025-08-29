@@ -40,6 +40,6 @@ public class User extends BaseEntity {
         this.email = email;
         this.password = password;
         this.loginType = LoginType.BASIC;
-        this.role = Role.ROLE_ADMIN;
+        this.role = Role.ROLE_DOCTOR;
     }
 }
