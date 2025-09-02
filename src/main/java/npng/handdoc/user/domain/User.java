@@ -18,8 +18,8 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nickname", unique = true)
-    private String nickname;
+    @Column(name = "name", unique = true)
+    private String name;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -41,5 +41,12 @@ public class User extends BaseEntity {
         this.password = password;
         this.loginType = LoginType.BASIC;
         this.role = Role.ROLE_DOCTOR;
+    }
+
+    @Builder(builderMethodName = "socialLoginBuilder", buildMethodName = "buildSocialLogin")
+    public User(String email, LoginType loginType) {
+        this.email = email;
+        this.loginType = loginType;
+        this.role = Role.ROLE_PATIENT;
     }
 }

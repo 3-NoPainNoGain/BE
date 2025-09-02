@@ -4,13 +4,18 @@ import lombok.RequiredArgsConstructor;
 import npng.handdoc.auth.dto.request.BasicLoginRequest;
 import npng.handdoc.auth.dto.response.LoginResponse;
 import npng.handdoc.auth.exception.AuthException;
+import npng.handdoc.auth.service.strategy.SocialLoginStrategy;
 import npng.handdoc.auth.util.JwtTokenProvider;
 import npng.handdoc.user.domain.User;
+import npng.handdoc.user.domain.type.LoginType;
 import npng.handdoc.user.exception.UserException;
 import npng.handdoc.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
+import static npng.handdoc.auth.exception.errorcode.AuthErrorCode.LOGIN_TYPE_NOT_SUPPORTED;
 import static npng.handdoc.user.exception.errorcode.UserErrorCode.*;
 
 @Service
@@ -20,6 +25,17 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
+    private final Map<String, SocialLoginStrategy> loginStrategyMap;
+
+    public LoginResponse socialLogin(LoginType loginType, String code) {
+        SocialLoginStrategy loginStrategy = loginStrategyMap.get(loginType.name());
+
+        if (loginStrategy == null) {
+            throw new AuthException(LOGIN_TYPE_NOT_SUPPORTED);
+        }
+
+        return loginStrategy.login(code);
+    }
     public void signup(BasicLoginRequest request) {
         String email = request.email();
 
