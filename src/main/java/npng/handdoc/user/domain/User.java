@@ -18,9 +18,6 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true)
-    private String name;
-
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -34,6 +31,14 @@ public class User extends BaseEntity {
     @Column(name = "login_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name="patient_id", unique = true)
+    private Patient patient;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name="doctor_id", unique = true)
+    private Doctor doctor;
 
     @Builder(builderMethodName = "basicLoginBuilder", buildMethodName = "buildBasicLogin")
     public User(String email, String password) {

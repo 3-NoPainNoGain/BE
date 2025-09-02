@@ -27,6 +27,7 @@ public class AuthService {
 
     private final Map<String, SocialLoginStrategy> loginStrategyMap;
 
+    // 소셜 로그인
     public LoginResponse socialLogin(LoginType loginType, String code) {
         SocialLoginStrategy loginStrategy = loginStrategyMap.get(loginType.name());
 
@@ -36,6 +37,8 @@ public class AuthService {
 
         return loginStrategy.login(code);
     }
+
+    // 기본 회원가입
     public void signup(BasicLoginRequest request) {
         String email = request.email();
 
@@ -49,9 +52,9 @@ public class AuthService {
                         .buildBasicLogin());
     }
 
+    // 기본 로그인
     public LoginResponse login(BasicLoginRequest request) {
-        User user =
-                userRepository
+        User user = userRepository
                         .findByEmail(request.email())
                         .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
@@ -60,6 +63,6 @@ public class AuthService {
         }
 
         String token = jwtTokenProvider.createToken(user.getId().toString());
-        return LoginResponse.from(user.getNickname(), user.getRole(), token);
+        return LoginResponse.from(user.getDoctor().getName(), user.getRole(), token);
     }
 }

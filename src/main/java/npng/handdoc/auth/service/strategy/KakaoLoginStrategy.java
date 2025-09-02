@@ -32,6 +32,6 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
         // 4. JWT 토큰 생성
         String token = jwtTokenProvider.createToken(user.getId().toString());
 
-        return LoginResponse.from(user.getNickname(), user.getRole(), token);
+        return LoginResponse.from(user.getPatient().getName(), user.getRole(), token);
     }
 }
