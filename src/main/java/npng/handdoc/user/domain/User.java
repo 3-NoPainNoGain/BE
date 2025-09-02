@@ -42,4 +42,11 @@ public class User extends BaseEntity {
         this.loginType = LoginType.BASIC;
         this.role = Role.ROLE_DOCTOR;
     }
+
+    @Builder(builderMethodName = "socialLoginBuilder", buildMethodName = "buildSocialLogin")
+    public User(String email, LoginType loginType) {
+        this.email = email;
+        this.loginType = loginType;
+        this.role = Role.ROLE_PATIENT;
+    }
 }

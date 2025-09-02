@@ -8,12 +8,10 @@ import npng.handdoc.auth.dto.request.BasicLoginRequest;
 import npng.handdoc.auth.dto.response.LoginResponse;
 import npng.handdoc.auth.service.AuthService;
 import npng.handdoc.global.response.ApiResponse;
+import npng.handdoc.user.domain.type.LoginType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/auth")
@@ -32,6 +30,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@Valid @RequestBody BasicLoginRequest basicLoginRequest) {
         LoginResponse loginResponse = authService.login(basicLoginRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.from(loginResponse));
+    }
+
+    @Operation(summary = "소셜 로그인 / 회원가입", description = "소셜 로그인을 진행합니다. 인가코드를 넣어주세요.")
+    @PostMapping("/login/{loginType}")
+    public ResponseEntity<ApiResponse<Object>> login(
+            @PathVariable LoginType loginType, @RequestParam String code) {
+        LoginResponse loginResponse = authService.socialLogin(loginType, code);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.from(loginResponse));
     }
 }
