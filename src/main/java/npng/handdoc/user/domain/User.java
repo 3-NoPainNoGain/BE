@@ -18,8 +18,8 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nickname", unique = true)
-    private String nickname;
+    @Column(name = "name", unique = true)
+    private String name;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
