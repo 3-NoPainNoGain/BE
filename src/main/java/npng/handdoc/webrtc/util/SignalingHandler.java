@@ -1,4 +1,4 @@
-package npng.handdoc.webrtc;
+package npng.handdoc.webrtc.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
