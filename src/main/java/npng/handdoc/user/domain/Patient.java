@@ -20,6 +20,9 @@ public class Patient {
     @Column(name="resident_id")
     private String residentId;
 
-    @OneToOne(mappedBy = "patient")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    void setUser(User user) { this.user = user; }
 }

@@ -32,13 +32,21 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name="patient_id", unique = true)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Doctor doctor;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Patient patient;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name="doctor_id", unique = true)
-    private Doctor doctor;
+    public void attachDoctor(Doctor doctor) {
+        this.doctor = doctor;
+        if (doctor != null) doctor.setUser(this);
+    }
+
+    public void attachPatient(Patient patient) {
+        this.patient = patient;
+        if (patient != null) patient.setUser(this);
+    }
 
     @Builder(builderMethodName = "basicLoginBuilder", buildMethodName = "buildBasicLogin")
     public User(String email, String password) {

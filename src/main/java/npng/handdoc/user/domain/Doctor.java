@@ -27,13 +27,16 @@ public class Doctor extends BaseEntity {
     @Column(name="hospital_name")
     private String hospitalName;
 
-    @Column(name="introducation")
+    @Column(name="introduction")
     private String introduction;
 
     @Column(name="status")
     @Enumerated(EnumType.STRING)
     private DoctorStatus status;
 
-    @OneToOne(mappedBy = "doctor")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    void setUser(User user) { this.user = user; }
 }

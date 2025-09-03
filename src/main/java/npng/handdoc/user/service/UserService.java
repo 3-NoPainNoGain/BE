@@ -1,6 +1,7 @@
 package npng.handdoc.user.service;
 
 import lombok.RequiredArgsConstructor;
+import npng.handdoc.user.domain.Patient;
 import npng.handdoc.user.domain.User;
 import npng.handdoc.user.domain.type.LoginType;
 import npng.handdoc.user.repository.UserRepository;
@@ -14,9 +15,13 @@ public class UserService {
 
     public User findOrCreateUser(String email, LoginType loginType) {
         return userRepository.findByEmailAndLoginType(email, loginType)
-                .orElseGet(() -> userRepository.save(User.socialLoginBuilder()
-                                                .email(email)
-                                                .loginType(loginType)
-                                                .buildSocialLogin()));
+                .orElseGet(() -> {
+                    User user = User.socialLoginBuilder()
+                            .email(email)
+                            .loginType(loginType)
+                            .buildSocialLogin();
+                    user.attachPatient(new Patient());
+                    return userRepository.save(user);
+                });
     }
 }
