@@ -7,6 +7,9 @@ import npng.handdoc.global.entity.BaseEntity;
 import npng.handdoc.user.domain.type.DoctorStatus;
 import npng.handdoc.user.domain.type.Speciality;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name="doctor")
@@ -37,6 +40,9 @@ public class Doctor extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DoctorTag> doctorTagList = new ArrayList<>();
 
     void setUser(User user) { this.user = user; }
 }
