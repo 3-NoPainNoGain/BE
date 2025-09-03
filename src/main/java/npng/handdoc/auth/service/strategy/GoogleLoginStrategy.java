@@ -24,6 +24,6 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
         GoogleUserInfoResponse userInfo = googleApiClient.getUserInfo(accessToken);
         User user = userService.findOrCreateUser(userInfo.email(), LoginType.GOOGLE);
         String token = jwtTokenProvider.createToken(user.getId().toString());
-        return LoginResponse.from(user.getPatient().getName(), user.getRole(), token);
+        return LoginResponse.from(user.getName(), user.getRole(), token);
     }
 }

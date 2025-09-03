@@ -7,6 +7,7 @@ import npng.handdoc.global.entity.BaseEntity;
 import npng.handdoc.user.domain.type.DoctorStatus;
 import npng.handdoc.user.domain.type.Speciality;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +15,11 @@ import java.util.List;
 @Entity
 @Table(name="doctor")
 @RequiredArgsConstructor
-public class Doctor extends BaseEntity {
+public class DoctorProfile extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "name", nullable = true)
-    private String name;
 
     @Column(name="speciality")
     @Enumerated(EnumType.STRING)
@@ -43,6 +41,14 @@ public class Doctor extends BaseEntity {
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DoctorTag> doctorTagList = new ArrayList<>();
+
+    public void addTag(String tagName){
+        DoctorTag doctorTag = DoctorTag.builder()
+                .name(tagName)
+                .doctor(this)
+                .build();
+        doctorTagList.add(doctorTag);
+    }
 
     void setUser(User user) { this.user = user; }
 }

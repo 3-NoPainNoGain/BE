@@ -1,7 +1,6 @@
 package npng.handdoc.user.service;
 
 import lombok.RequiredArgsConstructor;
-import npng.handdoc.user.domain.Patient;
 import npng.handdoc.user.domain.User;
 import npng.handdoc.user.domain.type.LoginType;
 import npng.handdoc.user.repository.UserRepository;
@@ -20,7 +19,6 @@ public class UserService {
                             .email(email)
                             .loginType(loginType)
                             .buildSocialLogin();
-                    user.attachPatient(new Patient());
                     return userRepository.save(user);
                 });
     }

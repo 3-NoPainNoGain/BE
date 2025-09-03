@@ -1,4 +1,3 @@
 package npng.handdoc.user.dto.request;
 
-public class DoctorTagRequest {
-}
+public record DoctorTagRequest(String tagName) {}

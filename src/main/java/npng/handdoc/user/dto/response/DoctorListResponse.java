@@ -1,6 +1,6 @@
 package npng.handdoc.user.dto.response;
 
-import npng.handdoc.user.domain.Doctor;
+import npng.handdoc.user.domain.DoctorProfile;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public record DoctorListResponse(
         int size,
         boolean hasNext
 ) {
-    public static DoctorListResponse from(Page<Doctor> page) {
+    public static DoctorListResponse from(Page<DoctorProfile> page) {
         return new DoctorListResponse(
                 page.map(DoctorListItemResponse::from).getContent(),
                 page.getTotalElements(),

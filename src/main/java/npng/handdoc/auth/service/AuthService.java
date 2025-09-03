@@ -6,7 +6,7 @@ import npng.handdoc.auth.dto.response.LoginResponse;
 import npng.handdoc.auth.exception.AuthException;
 import npng.handdoc.auth.service.strategy.SocialLoginStrategy;
 import npng.handdoc.auth.util.JwtTokenProvider;
-import npng.handdoc.user.domain.Doctor;
+import npng.handdoc.user.domain.DoctorProfile;
 import npng.handdoc.user.domain.User;
 import npng.handdoc.user.domain.type.LoginType;
 import npng.handdoc.user.exception.UserException;
@@ -47,7 +47,7 @@ public class AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .buildBasicLogin();
-        user.attachDoctor(new Doctor());
+        user.attachDoctor(new DoctorProfile());
         userRepository.save(user);
     }
 
@@ -62,6 +62,6 @@ public class AuthService {
         }
 
         String token = jwtTokenProvider.createToken(user.getId().toString());
-        return LoginResponse.from(user.getDoctor().getName(), user.getRole(), token);
+        return LoginResponse.from(user.getName(), user.getRole(), token);
     }
 }

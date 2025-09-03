@@ -3,11 +3,16 @@ package npng.handdoc.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import npng.handdoc.user.domain.DoctorTag;
+import npng.handdoc.user.dto.request.DoctorTagRequest;
 import npng.handdoc.user.service.DoctorService;
 import npng.handdoc.global.response.ApiResponse;
+import npng.handdoc.user.util.CustomUserDetails;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,5 +36,13 @@ public class DoctorController {
     @GetMapping("/{doctorId}")
     public ResponseEntity<ApiResponse<Object>> getDoctorDetail(@PathVariable Long doctorId){
         return ResponseEntity.ok(ApiResponse.from(doctorService.getDoctorDetail(doctorId)));
+    }
+
+    @Operation(summary = "의사 태그 생성 API (프론트 연동 X)", description = "의사 소개에 태그를 생성합니다. 의사 로그인 후 진행합니다.")
+    @PostMapping("/tag")
+    public ResponseEntity<ApiResponse<Object>> addDoctorTag(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                            @RequestBody DoctorTagRequest request){
+        doctorService.addTag(userDetails.getId(), request.tagName());
+        return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 }

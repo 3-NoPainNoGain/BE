@@ -1,38 +1,48 @@
 package npng.handdoc.user.service;
 
 import lombok.RequiredArgsConstructor;
-import npng.handdoc.diagnosis.domain.Diagnosis;
-import npng.handdoc.diagnosis.exception.DiagnosisException;
-import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
-import npng.handdoc.user.domain.Doctor;
+import npng.handdoc.user.domain.DoctorProfile;
+import npng.handdoc.user.domain.User;
 import npng.handdoc.user.dto.response.DoctorDetailResponse;
 import npng.handdoc.user.dto.response.DoctorListResponse;
 import npng.handdoc.user.exception.UserException;
 import npng.handdoc.user.exception.errorcode.UserErrorCode;
-import npng.handdoc.user.repository.DoctorRepository;
+import npng.handdoc.user.repository.DoctorProfileRepository;
+import npng.handdoc.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
 
-    private final DoctorRepository doctorRepository;
+    private final DoctorProfileRepository doctorProfileRepository;
+    private final UserRepository userRepository;
 
     public DoctorListResponse getDoctorList(Pageable pageable){
-        Page<Doctor> doctors = doctorRepository.findAll(pageable);
+        Page<DoctorProfile> doctors = doctorProfileRepository.findAll(pageable);
         return DoctorListResponse.from(doctors);
     }
 
-    public DoctorDetailResponse getDoctorDetail(@PathVariable Long doctorId){
-        Doctor doctor = findDoctorOrThrow(doctorId);
-        return DoctorDetailResponse.from(doctor);
+    public DoctorDetailResponse getDoctorDetail(Long doctorId){
+        DoctorProfile doctorProfile = findDoctorOrThrow(doctorId);
+        return DoctorDetailResponse.from(doctorProfile);
     }
 
-    private Doctor findDoctorOrThrow(Long doctorId){
-        return doctorRepository.findById(doctorId)
+    public void addTag(Long userId, String tagName){
+        DoctorProfile doctorProfile = findDoctorOrThrowByUserId(userId);
+        doctorProfile.addTag(tagName);
+        doctorProfileRepository.save(doctorProfile);
+    }
+
+    private DoctorProfile findDoctorOrThrow(Long doctorId){
+        return doctorProfileRepository.findById(doctorId)
+                .orElseThrow(()-> new UserException(UserErrorCode.DOCTOR_NOT_FOUND));
+    }
+
+    private DoctorProfile findDoctorOrThrowByUserId(Long userId){
+        return doctorProfileRepository.findByUserId(userId)
                 .orElseThrow(()-> new UserException(UserErrorCode.DOCTOR_NOT_FOUND));
     }
 }
