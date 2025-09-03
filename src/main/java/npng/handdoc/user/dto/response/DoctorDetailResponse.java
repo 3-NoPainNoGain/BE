@@ -5,6 +5,9 @@ import npng.handdoc.user.domain.DoctorProfile;
 import npng.handdoc.user.domain.type.DoctorStatus;
 import npng.handdoc.user.domain.type.Speciality;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Builder
 public record DoctorDetailResponse(
         Long id,
@@ -12,7 +15,8 @@ public record DoctorDetailResponse(
         Speciality speciality,
         String hospitalName,
         String introduction,
-        DoctorStatus status
+        DoctorStatus status,
+        List<DoctorTagResponse> doctorTagList
 ) {
     public static DoctorDetailResponse from(DoctorProfile doctor) {
         return DoctorDetailResponse.builder()
@@ -22,6 +26,10 @@ public record DoctorDetailResponse(
                 .hospitalName(doctor.getHospitalName())
                 .introduction(doctor.getIntroduction())
                 .status(doctor.getStatus())
+                .doctorTagList(doctor.getDoctorTagList()
+                        .stream()
+                        .map(DoctorTagResponse::from)
+                        .toList())
                 .build();
     }
 }
