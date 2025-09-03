@@ -1,0 +1,48 @@
+package npng.handdoc.user.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import npng.handdoc.user.domain.DoctorTag;
+import npng.handdoc.user.dto.request.DoctorTagRequest;
+import npng.handdoc.user.service.DoctorService;
+import npng.handdoc.global.response.ApiResponse;
+import npng.handdoc.user.util.CustomUserDetails;
+import org.apache.coyote.Response;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@Tag(name="Doctor", description = "의사 관련 API")
+@RequestMapping("/api/v2/doctor")
+public class DoctorController {
+
+    private final DoctorService doctorService;
+
+    @Operation(summary="의사 목록 조회 API", description = "의사 목록 전체를 조회합니다.")
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<Object>> getDoctorList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.from(doctorService.getDoctorList(pageable)));
+    }
+
+    @Operation(summary = "의사 상세 조회 API", description = "의사에 대한 상세 조회를 제공합니다. 의사 id를 입력해주세요.")
+    @GetMapping("/{doctorId}")
+    public ResponseEntity<ApiResponse<Object>> getDoctorDetail(@PathVariable Long doctorId){
+        return ResponseEntity.ok(ApiResponse.from(doctorService.getDoctorDetail(doctorId)));
+    }
+
+    @Operation(summary = "의사 태그 생성 API (프론트 연동 X)", description = "의사 소개에 태그를 생성합니다. 의사 로그인 후 진행합니다.")
+    @PostMapping("/tag")
+    public ResponseEntity<ApiResponse<Object>> addDoctorTag(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                            @RequestBody DoctorTagRequest request){
+        doctorService.addTag(userDetails.getId(), request.tagName());
+        return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
+    }
+}

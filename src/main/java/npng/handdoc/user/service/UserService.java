@@ -14,9 +14,12 @@ public class UserService {
 
     public User findOrCreateUser(String email, LoginType loginType) {
         return userRepository.findByEmailAndLoginType(email, loginType)
-                .orElseGet(() -> userRepository.save(User.socialLoginBuilder()
-                                                .email(email)
-                                                .loginType(loginType)
-                                                .buildSocialLogin()));
+                .orElseGet(() -> {
+                    User user = User.socialLoginBuilder()
+                            .email(email)
+                            .loginType(loginType)
+                            .buildSocialLogin();
+                    return userRepository.save(user);
+                });
     }
 }

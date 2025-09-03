@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private Long id;
-    private String nickname;
+    private String email;
     private String role;
 
     @Override
@@ -25,9 +25,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return nickname;
-    }
+    public String getUsername() { return email; }
 
     public Long getId() {
         return id;

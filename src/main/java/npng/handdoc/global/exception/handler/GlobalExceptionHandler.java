@@ -2,10 +2,12 @@ package npng.handdoc.global.exception.handler;
 
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
+import npng.handdoc.auth.exception.AuthException;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.global.exception.errorcode.ErrorCode;
 import npng.handdoc.global.exception.errorcode.GlobalErrorCode;
 import npng.handdoc.global.exception.response.ErrorResponse;
+import npng.handdoc.user.exception.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -32,8 +34,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * handleMemberNotFound(final UserNotFoundException e) { return
      * handleExceptionInternal(e.getErrorCode()); }
      */
-    @ExceptionHandler(DiagnosisException.class)
+    @ExceptionHandler(AuthException.class)
     public ResponseEntity<Object> handleAuthException(
+            final DiagnosisException e, HttpServletRequest request) {
+        logInfo(e.getErrorCode(), e, request);
+        return handleExceptionInternal(e.getErrorCode());
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<Object> handleUserException(
+            final DiagnosisException e, HttpServletRequest request) {
+        logInfo(e.getErrorCode(), e, request);
+        return handleExceptionInternal(e.getErrorCode());
+    }
+
+    @ExceptionHandler(DiagnosisException.class)
+    public ResponseEntity<Object> handleDiagnosisException(
             final DiagnosisException e, HttpServletRequest request) {
         logInfo(e.getErrorCode(), e, request);
         return handleExceptionInternal(e.getErrorCode());

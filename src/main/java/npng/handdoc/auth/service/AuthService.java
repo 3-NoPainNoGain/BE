@@ -6,6 +6,7 @@ import npng.handdoc.auth.dto.response.LoginResponse;
 import npng.handdoc.auth.exception.AuthException;
 import npng.handdoc.auth.service.strategy.SocialLoginStrategy;
 import npng.handdoc.auth.util.JwtTokenProvider;
+import npng.handdoc.user.domain.DoctorProfile;
 import npng.handdoc.user.domain.User;
 import npng.handdoc.user.domain.type.LoginType;
 import npng.handdoc.user.exception.UserException;
@@ -27,31 +28,32 @@ public class AuthService {
 
     private final Map<String, SocialLoginStrategy> loginStrategyMap;
 
+    // 소셜 로그인
     public LoginResponse socialLogin(LoginType loginType, String code) {
         SocialLoginStrategy loginStrategy = loginStrategyMap.get(loginType.name());
-
         if (loginStrategy == null) {
             throw new AuthException(LOGIN_TYPE_NOT_SUPPORTED);
         }
-
         return loginStrategy.login(code);
     }
+
+    // 기본 회원가입
     public void signup(BasicLoginRequest request) {
         String email = request.email();
-
         if (userRepository.existsByEmail(email)) {
             throw new UserException(USER_ALREADY_EXISTS);
         }
-
-        userRepository.save(User.basicLoginBuilder()
-                        .email(email)
-                        .password(passwordEncoder.encode(request.password()))
-                        .buildBasicLogin());
+        User user = User.basicLoginBuilder()
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .buildBasicLogin();
+        user.attachDoctor(new DoctorProfile());
+        userRepository.save(user);
     }
 
+    // 기본 로그인
     public LoginResponse login(BasicLoginRequest request) {
-        User user =
-                userRepository
+        User user = userRepository
                         .findByEmail(request.email())
                         .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
@@ -60,6 +62,6 @@ public class AuthService {
         }
 
         String token = jwtTokenProvider.createToken(user.getId().toString());
-        return LoginResponse.from(user.getNickname(), user.getRole(), token);
+        return LoginResponse.from(user.getName(), user.getRole(), token);
     }
 }
