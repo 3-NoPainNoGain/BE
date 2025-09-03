@@ -7,6 +7,7 @@ import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.global.exception.errorcode.ErrorCode;
 import npng.handdoc.global.exception.errorcode.GlobalErrorCode;
 import npng.handdoc.global.exception.response.ErrorResponse;
+import npng.handdoc.reservation.exception.ReservationException;
 import npng.handdoc.user.exception.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DiagnosisException.class)
     public ResponseEntity<Object> handleDiagnosisException(
+            final DiagnosisException e, HttpServletRequest request) {
+        logInfo(e.getErrorCode(), e, request);
+        return handleExceptionInternal(e.getErrorCode());
+    }
+
+    @ExceptionHandler(ReservationException.class)
+    public ResponseEntity<Object> handleReservationException(
             final DiagnosisException e, HttpServletRequest request) {
         logInfo(e.getErrorCode(), e, request);
         return handleExceptionInternal(e.getErrorCode());
