@@ -2,23 +2,21 @@ package npng.handdoc.user.service;
 
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.user.domain.DoctorProfile;
-import npng.handdoc.user.domain.User;
 import npng.handdoc.user.dto.response.DoctorDetailResponse;
 import npng.handdoc.user.dto.response.DoctorListResponse;
 import npng.handdoc.user.exception.UserException;
 import npng.handdoc.user.exception.errorcode.UserErrorCode;
 import npng.handdoc.user.repository.DoctorProfileRepository;
-import npng.handdoc.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
 
     private final DoctorProfileRepository doctorProfileRepository;
-    private final UserRepository userRepository;
 
     public DoctorListResponse getDoctorList(Pageable pageable){
         Page<DoctorProfile> doctors = doctorProfileRepository.findAll(pageable);
@@ -30,10 +28,10 @@ public class DoctorService {
         return DoctorDetailResponse.from(doctorProfile);
     }
 
+    @Transactional
     public void addTag(Long userId, String tagName){
         DoctorProfile doctorProfile = findDoctorOrThrowByUserId(userId);
         doctorProfile.addTag(tagName);
-        doctorProfileRepository.save(doctorProfile);
     }
 
     private DoctorProfile findDoctorOrThrow(Long doctorId){
