@@ -12,20 +12,20 @@ import java.util.stream.Collectors;
 public record DoctorDetailResponse(
         Long id,
         String name,
-        Speciality speciality,
+        String speciality,
         String hospitalName,
         String introduction,
-        DoctorStatus status,
+        String status,
         List<DoctorTagResponse> doctorTagList
 ) {
     public static DoctorDetailResponse from(DoctorProfile doctor) {
         return DoctorDetailResponse.builder()
                 .id(doctor.getId())
                 .name(doctor.getUser().getName())
-                .speciality(doctor.getSpeciality())
+                .speciality(doctor.getSpeciality().getLabel())
                 .hospitalName(doctor.getHospitalName())
                 .introduction(doctor.getIntroduction())
-                .status(doctor.getStatus())
+                .status(doctor.getStatus().getLabel())
                 .doctorTagList(doctor.getDoctorTagList()
                         .stream()
                         .map(DoctorTagResponse::from)
