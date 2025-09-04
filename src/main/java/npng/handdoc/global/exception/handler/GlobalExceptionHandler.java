@@ -8,6 +8,7 @@ import npng.handdoc.global.exception.errorcode.ErrorCode;
 import npng.handdoc.global.exception.errorcode.GlobalErrorCode;
 import npng.handdoc.global.exception.response.ErrorResponse;
 import npng.handdoc.reservation.exception.ReservationException;
+import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.user.exception.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<Object> handleAuthException(
-            final DiagnosisException e, HttpServletRequest request) {
+            final AuthException e, HttpServletRequest request) {
         logInfo(e.getErrorCode(), e, request);
         return handleExceptionInternal(e.getErrorCode());
     }
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<Object> handleUserException(
-            final DiagnosisException e, HttpServletRequest request) {
+            final UserException e, HttpServletRequest request) {
         logInfo(e.getErrorCode(), e, request);
         return handleExceptionInternal(e.getErrorCode());
     }
@@ -58,7 +59,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ReservationException.class)
     public ResponseEntity<Object> handleReservationException(
-            final DiagnosisException e, HttpServletRequest request) {
+            final ReservationException e, HttpServletRequest request) {
+        logInfo(e.getErrorCode(), e, request);
+        return handleExceptionInternal(e.getErrorCode());
+    }
+
+
+    @ExceptionHandler(TelemedException.class)
+    public ResponseEntity<Object> handleTelemedException(
+            final TelemedException e, HttpServletRequest request) {
         logInfo(e.getErrorCode(), e, request);
         return handleExceptionInternal(e.getErrorCode());
     }

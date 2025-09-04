@@ -1,11 +1,11 @@
 package npng.handdoc.reservation.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.global.entity.BaseEntity;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
+import npng.handdoc.reservation.domain.type.Symptom;
 import npng.handdoc.user.domain.DoctorProfile;
 import npng.handdoc.user.domain.User;
 
@@ -23,7 +23,8 @@ public class Reservation extends BaseEntity {
     private Long id;
 
     @Column(name="symptom")
-    private String symptom;
+    @Enumerated(EnumType.STRING)
+    private Symptom symptom;
 
     @Column(name="symptom_duration")
     private Long symptomDuration;
