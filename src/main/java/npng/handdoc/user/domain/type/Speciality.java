@@ -1,8 +1,8 @@
 package npng.handdoc.user.domain.type;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Getter
+@RequiredArgsConstructor
 public enum Speciality {
     INTERNAL("내과"),
     GENERAL("외과"),
@@ -11,7 +11,5 @@ public enum Speciality {
 
     private final String label;
 
-    Speciality(String label){
-        this.label = label;
-    }
+    public String getLabel() { return label; }
 }
