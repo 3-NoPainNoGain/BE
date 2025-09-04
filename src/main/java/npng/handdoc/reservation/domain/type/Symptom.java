@@ -3,9 +3,12 @@ package npng.handdoc.reservation.domain.type;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum ReservationStatus {
-    PENDING("예약 확인 중"),
-    CONFIRMED("예약 완료");
+public enum Symptom {
+    COUGH("기침"),
+    SPUTUM("가래"),
+    NOSE("코막힘"),
+    HEADACHE("두통"),
+    FEVER("발열");
 
     private final String label;
 
