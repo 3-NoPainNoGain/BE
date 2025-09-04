@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public record DoctorDetailResponse(
         Long id,
         String name,
-        Speciality speciality,
+        String speciality,
         String hospitalName,
         String introduction,
         DoctorStatus status,
@@ -22,7 +22,7 @@ public record DoctorDetailResponse(
         return DoctorDetailResponse.builder()
                 .id(doctor.getId())
                 .name(doctor.getUser().getName())
-                .speciality(doctor.getSpeciality())
+                .speciality(doctor.getSpeciality().getLabel())
                 .hospitalName(doctor.getHospitalName())
                 .introduction(doctor.getIntroduction())
                 .status(doctor.getStatus())
