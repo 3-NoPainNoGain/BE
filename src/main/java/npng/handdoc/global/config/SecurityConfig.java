@@ -3,6 +3,8 @@ package npng.handdoc.global.config;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.auth.filter.JwtAuthFilter;
 import npng.handdoc.auth.util.JwtTokenProvider;
+import npng.handdoc.global.exception.handler.CustomAccessDeniedHandler;
+import npng.handdoc.global.exception.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,27 +28,28 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint, CustomAccessDeniedHandler customAccessDeniedHandler) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화
                 .authorizeHttpRequests(
-                        authorize ->
-                                authorize
+                        authorize -> authorize
                                         // Swagger 관련 전체 허용
                                         .requestMatchers(
                                                 "/swagger-ui/**",
                                                 "/v3/api-docs/**",
                                                 "/swagger-resources/**",
                                                 "/swagger-ui.html",
-                                                "/v3/api-docs/swagger-config")
-                                        .permitAll()
-                                        // 그 외 모든 요청 허용
-                                        .anyRequest()
-                                        .permitAll())
-                .addFilterBefore(
-                        new JwtAuthFilter(jwtTokenProvider),
+                                                "/v3/api-docs/swagger-config").permitAll()
+                                // 비대면 관련
+                                .requestMatchers("/api/v2/telemed/**").authenticated()
+                                // 나머지는 허용
+                                .anyRequest().permitAll())
+                .exceptionHandling(exceptionHandler -> exceptionHandler
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
+                .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         return http.build();
