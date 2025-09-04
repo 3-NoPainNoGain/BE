@@ -15,7 +15,7 @@ public record DoctorDetailResponse(
         String speciality,
         String hospitalName,
         String introduction,
-        DoctorStatus status,
+        String status,
         List<DoctorTagResponse> doctorTagList
 ) {
     public static DoctorDetailResponse from(DoctorProfile doctor) {
@@ -25,7 +25,7 @@ public record DoctorDetailResponse(
                 .speciality(doctor.getSpeciality().getLabel())
                 .hospitalName(doctor.getHospitalName())
                 .introduction(doctor.getIntroduction())
-                .status(doctor.getStatus())
+                .status(doctor.getStatus().getLabel())
                 .doctorTagList(doctor.getDoctorTagList()
                         .stream()
                         .map(DoctorTagResponse::from)
