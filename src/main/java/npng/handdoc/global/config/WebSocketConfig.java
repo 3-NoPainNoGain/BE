@@ -1,7 +1,7 @@
 package npng.handdoc.global.config;
 
 import lombok.RequiredArgsConstructor;
-import npng.handdoc.global.webrtc.SignalingHandler;
+import npng.handdoc.telemed.util.SignalingHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

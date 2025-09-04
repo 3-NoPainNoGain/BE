@@ -8,7 +8,6 @@ import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.domain.type.Symptom;
 import npng.handdoc.user.domain.DoctorProfile;
 import npng.handdoc.user.domain.User;
-import npng.handdoc.webrtc.domain.TelemedDiagnosis;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
