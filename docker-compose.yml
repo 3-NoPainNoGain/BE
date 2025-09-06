@@ -14,8 +14,27 @@ services:
     networks:
       - handdoc-net
 
+  mysql:
+    image: mysql:8.0
+    container_name: handdoc-mysql
+    restart: always
+    ports:
+      - "53306:3306"
+    environment:
+      MYSQL_DATABASE: handdoc
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_PASS}
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+        - mysql_data:/var/lib/mysql
+    networks:
+        - handdoc-net
+
 volumes:
   mongo_data:
+  mysql_data:
 
 networks:
   handdoc-net:
