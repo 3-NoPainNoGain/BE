@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(signalingHandler, "/ws/singaling")
+        registry.addHandler(signalingHandler, "/ws/signaling")
                 .setAllowedOrigins("*"); // 추후에 도메인 제한
     }
 }
