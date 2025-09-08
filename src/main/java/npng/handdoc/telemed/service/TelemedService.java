@@ -6,17 +6,20 @@ import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.exception.ReservationException;
 import npng.handdoc.reservation.repository.ReservationRepository;
 import npng.handdoc.telemed.domain.Telemed;
+import npng.handdoc.telemed.dto.response.EndResponse;
 import npng.handdoc.telemed.dto.response.JoinResponse;
 import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.telemed.exception.errorcode.TelemedErrorCode;
 import npng.handdoc.telemed.repository.TelemedRepository;
 import npng.handdoc.user.domain.type.Role;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static npng.handdoc.reservation.exception.errorcode.ReservationErrorCode.RESERVATION_NOT_FOUND;
 import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.RESERVATION_NOT_CONFIRMED;
+import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.ROOM_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -52,12 +55,24 @@ public class TelemedService {
         return JoinResponse.from(telemed, role, WS_URL, DEFAULT_ICE);
     }
 
+//    @Transactional
+//    public EndResponse end(Long userId, String roomId){
+//        Telemed telemed = findRoomOrElse(roomId);
+//        telemed.markEnded();
+//        telemedRepository.save(telemed);
+//        return EndResponse.from();
+//    }
+
     private Reservation findReservationOrElse(Long reservationId) {
         return reservationRepository.findById(reservationId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
     }
 
     private Telemed findTelemedOrELse(Long reservationId) {
         return telemedRepository.findByReservationId(reservationId).orElse(null);
+    }
+
+    private Telemed findRoomOrElse(String roomId) {
+        return telemedRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
     private Telemed createFromReservation(Reservation reservation) {
