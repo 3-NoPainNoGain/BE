@@ -21,12 +21,4 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(signalingHandler, "/ws/singaling")
                 .setAllowedOrigins("*"); // 추후에 도메인 제한
     }
-
-    @Bean
-    public ServletServerContainerFactoryBean webSocketContainer() {
-        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxTextMessageBufferSize(512 * 1024);
-        container.setMaxBinaryMessageBufferSize(512 * 1024);
-        return container;
-    }
 }
