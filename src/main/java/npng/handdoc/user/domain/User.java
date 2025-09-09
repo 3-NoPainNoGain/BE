@@ -46,6 +46,10 @@ public class User extends BaseEntity {
         if (doctor != null) doctor.setUser(this);
     }
 
+    public void addName(String name){
+        this.name = name;
+    }
+
     @Builder(builderMethodName = "basicLoginBuilder", buildMethodName = "buildBasicLogin")
     public User(String email, String password) {
         this.email = email;
