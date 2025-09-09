@@ -6,6 +6,7 @@ import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.exception.ReservationException;
 import npng.handdoc.reservation.repository.ReservationRepository;
 import npng.handdoc.telemed.domain.Telemed;
+import npng.handdoc.telemed.domain.type.DiagnosisStatus;
 import npng.handdoc.telemed.dto.response.EndResponse;
 import npng.handdoc.telemed.dto.response.JoinResponse;
 import npng.handdoc.telemed.exception.TelemedException;
@@ -59,8 +60,12 @@ public class TelemedService {
     public EndResponse end(Long userId, String roomId){
         Telemed telemed = findRoomOrElse(roomId);
         Role role = resolveRole(telemed, userId);
+
+        if(telemed.getDiagnosisStatus() == DiagnosisStatus.ENDED){
+            throw new TelemedException(TelemedErrorCode.ALREADY_ROOM_ENDED);
+        }
+
         telemed.markEnded();
-        telemedRepository.save(telemed);
         return EndResponse.from(telemed);
     }
 
