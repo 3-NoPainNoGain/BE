@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface TelemedRepository extends JpaRepository<Telemed, String> {
     Optional<Telemed> findByReservationId(Long reservationId);
-    Optional<Telemed> findByRoomId(String roomId);
+    Optional<Telemed> findById(String roomId);
 }

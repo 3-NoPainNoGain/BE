@@ -90,10 +90,10 @@ public class SignalingHandler extends TextWebSocketHandler {
         switch (type) {
             case "offer":      // SDP offer
             case "answer":     // SDP answer
-            case "text":       // 단순 텍스트(알림/메모 등), 채팅 대용으로 사용
+            case "text":       // 텍스트
             case "candidate":  // ICE 후보(표준 명칭)
             case "ice":        // ICE 후보
-            case "leave":      // 나감 이벤트
+            case "leave":      // 종료
             case "renegotiate":// 재협상 트리거
                 relayToOthers(roomId, session, message);
                 break;

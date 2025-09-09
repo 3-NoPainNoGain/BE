@@ -28,10 +28,10 @@ public class TelemedController {
         return ResponseEntity.ok(ApiResponse.from(telemedService.join(userDetails.getId(), reservationId)));
     }
 
-//    @Operation(summary = "(환자, 의사) 진료실 종료 API", description = "진료 종료 버튼을 통해 화상 통화를 마무리합니다.")
-//    @PostMapping("/{roomId}/end")
-//    public ResponseEntity<ApiResponse<Object>> end(@AuthenticationPrincipal CustomUserDetails userDetails,
-//                                                   @PathVariable String roomId) {
-//        return ResponseEntity.ok(ApiResponse.from(telemedService.end(userDetails.getId(), roomId)));
-//    }
+    @Operation(summary = "(환자, 의사) 진료실 종료 API", description = "진료 종료 버튼을 통해 화상 통화를 마무리합니다.")
+    @PostMapping("/{roomId}/end")
+    public ResponseEntity<ApiResponse<Object>> end(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                   @PathVariable String roomId) {
+        return ResponseEntity.ok(ApiResponse.from(telemedService.end(userDetails.getId(), roomId)));
+    }
 }

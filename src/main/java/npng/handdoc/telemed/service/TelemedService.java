@@ -55,13 +55,14 @@ public class TelemedService {
         return JoinResponse.from(telemed, role, WS_URL, DEFAULT_ICE);
     }
 
-//    @Transactional
-//    public EndResponse end(Long userId, String roomId){
-//        Telemed telemed = findRoomOrElse(roomId);
-//        telemed.markEnded();
-//        telemedRepository.save(telemed);
-//        return EndResponse.from();
-//    }
+    @Transactional
+    public EndResponse end(Long userId, String roomId){
+        Telemed telemed = findRoomOrElse(roomId);
+        Role role = resolveRole(telemed, userId);
+        telemed.markEnded();
+        telemedRepository.save(telemed);
+        return EndResponse.from(telemed);
+    }
 
     private Reservation findReservationOrElse(Long reservationId) {
         return reservationRepository.findById(reservationId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
@@ -72,7 +73,7 @@ public class TelemedService {
     }
 
     private Telemed findRoomOrElse(String roomId) {
-        return telemedRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
+        return telemedRepository.findById(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
     private Telemed createFromReservation(Reservation reservation) {
@@ -94,6 +95,12 @@ public class TelemedService {
         if(userId.equals(patientId)) return Role.ROLE_PATIENT;
         if(userId.equals(doctorId)) return Role.ROLE_DOCTOR;
 
+        throw new TelemedException(TelemedErrorCode.NOT_PARTICIPANT);
+    }
+
+    private Role resolveRole(Telemed telemed, Long userId) {
+        if (userId.equals(telemed.getPatientId())) return Role.ROLE_PATIENT;
+        if (userId.equals(telemed.getDoctorId())) return Role.ROLE_DOCTOR;
         throw new TelemedException(TelemedErrorCode.NOT_PARTICIPANT);
     }
 }
