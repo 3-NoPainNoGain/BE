@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.global.response.ApiResponse;
 import npng.handdoc.user.dto.request.NameRequest;
+import npng.handdoc.user.dto.request.ResidentIdRequest;
 import npng.handdoc.user.service.UserService;
 import npng.handdoc.user.util.CustomUserDetails;
 import org.apache.coyote.Response;
@@ -29,6 +30,14 @@ public class UserController {
     public ResponseEntity<ApiResponse<Object>> name(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                     @RequestBody NameRequest request) {
         userService.addName(userDetails.getId(), request.name());
+        return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
+    }
+
+    @Operation(summary = "주민등록번호 등록 API", description = "환자의 주민등록번호를 입력하는 API입니다. 주민등록번호 전체를 입력해주세요.")
+    @PostMapping("/resident-id")
+    public ResponseEntity<ApiResponse<Object>> residentId(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                          @RequestBody ResidentIdRequest request){
+        userService.addResidentId(userDetails.getId(), request.residentId());
         return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 }
