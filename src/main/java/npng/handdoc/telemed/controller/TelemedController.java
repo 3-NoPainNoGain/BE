@@ -2,16 +2,20 @@ package npng.handdoc.telemed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.global.response.ApiResponse;
+import npng.handdoc.telemed.dto.request.SignRequest;
+import npng.handdoc.telemed.service.TelemedChatService;
 import npng.handdoc.telemed.service.TelemedService;
 import npng.handdoc.user.util.CustomUserDetails;
+import org.apache.coyote.Response;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TelemedController {
 
     private final TelemedService telemedService;
+    private final TelemedChatService telemedChatService;
 
     @Operation(summary = "(환자, 의사) 진료실 입장 API", description = "진료 입장 버튼에 사용되는 API입니다. 의사와 환자 공통으로 사용합니다.")
     @PostMapping("/{reservationId}/join")
@@ -33,5 +38,30 @@ public class TelemedController {
     public ResponseEntity<ApiResponse<Object>> end(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                    @PathVariable String roomId) {
         return ResponseEntity.ok(ApiResponse.from(telemedService.end(userDetails.getId(), roomId)));
+    }
+
+    @Operation(summary = "(환자) 수어 텍스트 전송하고 db에 저장하는 API", description = "환자의 수어 텍스트를 db에 저장합니다.")
+    @PostMapping("/{roomId}/sign")
+    public ResponseEntity<ApiResponse<Object>> sign(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                    @PathVariable String roomId,
+                                                    @RequestBody SignRequest request) {
+        telemedChatService.saveSign(userDetails.getId(), roomId, request);
+        return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
+    }
+
+    @Operation(summary = "(의사) 텍스트로 변환된 음성을 db에 저장하는 API", description = "의사의 음성 텍스트를 db에 저장합니다.")
+    @PostMapping(value = "/{roomId}/speech", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<Object>> speech(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                      @PathVariable String roomId,
+                                                      @RequestPart("file") MultipartFile file)throws Exception{
+        String result = telemedChatService.saveSpeechText(userDetails.getId(), roomId, file);
+        return ResponseEntity.ok(ApiResponse.from(result));
+    }
+
+    @Operation(summary = "비대면 진료 요약 API", description = "비대면 진료 내용을 요약합니다. roomId를 입력하세요.")
+    @GetMapping("/{roomId}/summary")
+    public ResponseEntity<SummaryRes> summary(@PathVariable String roomId){
+        SummaryRes summary = telemedChatService.getSummary(roomId);
+        return ResponseEntity.ok(summary);
     }
 }
