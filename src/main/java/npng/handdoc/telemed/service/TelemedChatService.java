@@ -1,6 +1,10 @@
 package npng.handdoc.telemed.service;
 
 import lombok.RequiredArgsConstructor;
+import npng.handdoc.diagnosis.domain.ChatLog;
+import npng.handdoc.diagnosis.domain.Diagnosis;
+import npng.handdoc.diagnosis.util.naver.NaverCsrClient;
+import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
 import npng.handdoc.telemed.domain.Telemed;
 import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.DiagnosisStatus;
@@ -17,7 +21,9 @@ import npng.handdoc.user.exception.errorcode.UserErrorCode;
 import npng.handdoc.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -30,7 +36,9 @@ public class TelemedChatService {
     private final TelemedRepository telemedRepository;
     private final TelemedChatRepository telemedChatRepository;
     private final UserRepository userRepository;
+    private final NaverCsrClient naverCsrClient;
 
+    // 수어 등록
     @Transactional
     public void saveSign(Long userId, String roomId, SignRequest request){
         User user = findUserOrElse(userId);
@@ -50,6 +58,29 @@ public class TelemedChatService {
         telemedChatRepository.save(chatLog);
     }
 
+    // 음성 -> 텍스트 변환 후 저장
+    @Transactional
+    public String saveSpeechText(Long userId, String roomId, MultipartFile file) throws IOException {
+        User user = findUserOrElse(userId);
+        Telemed telemed = findRoomOrElse(roomId);
+        validateDoctorAccess(telemed, user);
+
+        ClovaCsrRes speechText = naverCsrClient.transcribe(file.getBytes());
+        String text = speechText.text();
+
+        TelemedChatLog.Message messgae = TelemedChatLog.Message.builder()
+                .sender(Sender.DOCTOR)
+                .messageType(MessageType.STT)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        TelemedChatLog chatLog = telemedChatRepository.findByRoomId(roomId)
+                .orElseGet(()-> new TelemedChatLog(null, roomId, new ArrayList<>()));
+        chatLog.getMessageList().add(messgae);
+        telemedChatRepository.save(chatLog);
+        return text;
+    }
+
     private User findUserOrElse(Long userId){
         return userRepository.findById(userId).orElseThrow(()-> new UserException(UserErrorCode.USER_NOT_FOUND));
     }
@@ -63,6 +94,15 @@ public class TelemedChatService {
             throw new TelemedException(TelemedErrorCode.ALREADY_ROOM_ENDED);
         }
         if (!telemed.getPatientId().equals(user.getId())){
+            throw new TelemedException(TelemedErrorCode.NOT_PARTICIPANT);
+        }
+    }
+
+    private void validateDoctorAccess(Telemed telemed, User user){
+        if (telemed.getDiagnosisStatus() != DiagnosisStatus.ACTIVE){
+            throw new TelemedException(TelemedErrorCode.ALREADY_ROOM_ENDED);
+        }
+        if(!telemed.getDoctorId().equals(user.getId())){
             throw new TelemedException(TelemedErrorCode.NOT_PARTICIPANT);
         }
     }
