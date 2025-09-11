@@ -23,6 +23,9 @@ naver:
   clova:
     api-key-id: ${CLOVA_API_KEY_ID}
     api-key: ${CLOVA_API_KEY}
+    grpc:
+      host: clovaspeech.apigw.ntruss.com
+      port: 443
 
 openai:
   api:
