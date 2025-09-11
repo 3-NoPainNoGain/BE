@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.net.ssl.SSLException;
 
 @Configuration
-public class ClovaGrpcClient {
+public class NaverGrpcClient {
 
     @Value("${naver.clova.api-key-id}")
     private String apiKeyId;
