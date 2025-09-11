@@ -70,6 +70,31 @@ dependencies{
 	implementation 'com.google.protobuf:protobuf-java:3.25.3'
 }
 
+protobuf {
+	protoc { artifact = "com.google.protobuf:protoc:3.25.3" }   // ★
+	plugins {
+		grpc { artifact = "io.grpc:protoc-gen-grpc-java:1.64.0" }
+	}
+	generateProtoTasks {
+		all().configureEach { task ->
+			task.plugins { grpc {} }  // gRPC 스텁
+			task.builtins { java {} } // 메시지 클래스
+		}
+	}
+}
+
+sourceSets {
+	main {
+		proto { srcDir 'src/main/proto' }
+		java {
+			srcDirs += [
+					"$buildDir/generated/source/proto/main/java",
+					"$buildDir/generated/source/proto/main/grpc"
+			]
+		}
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
