@@ -43,4 +43,9 @@ public class NaverGrpcClient {
         md.put(KEY, apiKey);
         return md;
     }
+
+    @Bean
+    public io.grpc.ClientInterceptor clovaAuthInterceptor(Metadata clovaMetadata) {
+        return io.grpc.stub.MetadataUtils.newAttachHeadersInterceptor(clovaMetadata);
+    }
 }
