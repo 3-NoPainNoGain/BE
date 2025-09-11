@@ -68,17 +68,19 @@ dependencies{
 	implementation 'io.grpc:grpc-stub'
 	implementation 'io.grpc:grpc-protobuf'
 	implementation 'com.google.protobuf:protobuf-java:3.25.3'
+
+	implementation platform('io.grpc:grpc-bom:1.64.0')
 }
 
 protobuf {
-	protoc { artifact = "com.google.protobuf:protoc:3.25.3" }   // ★
+	protoc { artifact = "com.google.protobuf:protoc:3.25.3" }
 	plugins {
 		grpc { artifact = "io.grpc:protoc-gen-grpc-java:1.64.0" }
 	}
 	generateProtoTasks {
 		all().configureEach { task ->
-			task.plugins { grpc {} }  // gRPC 스텁
-			task.builtins { java {} } // 메시지 클래스
+			task.plugins { grpc {} }
+			task.builtins { java {} }
 		}
 	}
 }
