@@ -53,7 +53,7 @@ public class TelemedService {
         // 둘 다 입장하면 ACTIVE 전환
         telemed.activateIfBothJoined();
         telemedRepository.save(telemed);
-        return JoinResponse.from(telemed, role, WS_URL, DEFAULT_ICE);
+        return JoinResponse.from(telemed, role, WS_URL, DEFAULT_ICE, reservation);
     }
 
     @Transactional
