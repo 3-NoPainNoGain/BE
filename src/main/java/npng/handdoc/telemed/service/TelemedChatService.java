@@ -10,6 +10,7 @@ import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.util.naver.NaverCsrClient;
 import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
 import npng.handdoc.diagnosis.util.openai.service.OpenAIService;
+import npng.handdoc.telemed.domain.Summary;
 import npng.handdoc.telemed.domain.Telemed;
 import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.DiagnosisStatus;
@@ -18,6 +19,7 @@ import npng.handdoc.telemed.domain.type.Sender;
 import npng.handdoc.telemed.dto.request.SignRequest;
 import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.telemed.exception.errorcode.TelemedErrorCode;
+import npng.handdoc.telemed.repository.SummaryRepository;
 import npng.handdoc.telemed.repository.TelemedChatRepository;
 import npng.handdoc.telemed.repository.TelemedRepository;
 import npng.handdoc.user.domain.User;
@@ -90,12 +92,22 @@ public class TelemedChatService {
 
     // 진료 내용 요약
     @Transactional
-    public SummaryRes getSummary(String roomId){
+    public SummaryRes saveSummary(String roomId){
         Telemed telemed = findRoomOrElse(roomId);
         validateInactive(telemed);
         TelemedChatLog telemedChatLog = findChatLogOrElse(roomId);
+
         SummaryAIRes summaryAIRes = openAIService.summarize(telemedChatLog);
         String consultationTime = calculateTime(telemed);
+        Summary summary = Summary.builder()
+                .consultationTime(consultationTime)
+                .symptom(summaryAIRes.symptom())
+                .impression(summaryAIRes.impression())
+                .prescription(summaryAIRes.prescription())
+                .build();
+        telemed.addSummary(summary);
+
+        telemedRepository.save(telemed);
         return SummaryRes.of(consultationTime, summaryAIRes.symptom(), summaryAIRes.impression(), summaryAIRes.prescription());
     }
 

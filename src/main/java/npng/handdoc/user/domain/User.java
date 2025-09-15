@@ -51,7 +51,7 @@ public class User extends BaseEntity {
     }
 
     public void addResidentId(String residentId){
-        this.name = name;
+        this.residentId = residentId;
     }
 
     @Builder(builderMethodName = "basicLoginBuilder", buildMethodName = "buildBasicLogin")

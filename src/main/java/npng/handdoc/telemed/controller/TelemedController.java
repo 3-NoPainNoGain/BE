@@ -2,7 +2,6 @@ package npng.handdoc.telemed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.dto.response.SummaryRes;
 import npng.handdoc.global.response.ApiResponse;
@@ -10,7 +9,8 @@ import npng.handdoc.telemed.dto.request.SignRequest;
 import npng.handdoc.telemed.service.TelemedChatService;
 import npng.handdoc.telemed.service.TelemedService;
 import npng.handdoc.user.util.CustomUserDetails;
-import org.apache.coyote.Response;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,7 +61,16 @@ public class TelemedController {
     @Operation(summary = "비대면 진료 요약 API", description = "비대면 진료 내용을 요약합니다. roomId를 입력하세요.")
     @GetMapping("/{roomId}/summary")
     public ResponseEntity<SummaryRes> summary(@PathVariable String roomId){
-        SummaryRes summary = telemedChatService.getSummary(roomId);
+        SummaryRes summary = telemedChatService.saveSummary(roomId);
         return ResponseEntity.ok(summary);
+    }
+
+    @Operation(summary = "비대면 진료 내역 조회 API", description = "비대면 진료 내역을 조회합니다.")
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<Object>> history(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.from(telemedService.getHistory(pageable, userDetails.getId())));
     }
 }
