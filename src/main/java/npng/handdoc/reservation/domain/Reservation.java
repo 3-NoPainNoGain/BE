@@ -36,7 +36,7 @@ public class Reservation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "reservation_interpretation",
             joinColumns = @JoinColumn(name = "reservation_id"))
     @Column(name="interpretation_option")
