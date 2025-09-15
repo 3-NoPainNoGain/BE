@@ -61,7 +61,7 @@ public class TelemedController {
     @Operation(summary = "비대면 진료 요약 API", description = "비대면 진료 내용을 요약합니다. roomId를 입력하세요.")
     @GetMapping("/{roomId}/summary")
     public ResponseEntity<SummaryRes> summary(@PathVariable String roomId){
-        SummaryRes summary = telemedChatService.getSummary(roomId);
+        SummaryRes summary = telemedChatService.saveSummary(roomId);
         return ResponseEntity.ok(summary);
     }
 }

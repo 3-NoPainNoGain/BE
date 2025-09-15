@@ -73,4 +73,9 @@ public class Telemed extends BaseEntity {
         this.diagnosisStatus = DiagnosisStatus.ENDED;
         this.endedAt = LocalDateTime.now();
     }
+
+    public void addSummary(Summary summary) {
+        this.summary = summary;
+        summary.setTelemed(this);
+    }
 }
