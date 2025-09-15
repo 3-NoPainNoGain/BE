@@ -24,6 +24,9 @@ public class Telemed extends BaseEntity {
     @JoinColumn(name="reservation_id")
     private Reservation reservation;
 
+    @OneToOne(mappedBy = "telemed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Summary summary;
+
     @Column(name="status")
     @Enumerated(EnumType.STRING)
     private DiagnosisStatus diagnosisStatus; // WAITING, ACTIVE, ENDED
