@@ -8,11 +8,15 @@ import npng.handdoc.reservation.repository.ReservationRepository;
 import npng.handdoc.telemed.domain.Telemed;
 import npng.handdoc.telemed.domain.type.DiagnosisStatus;
 import npng.handdoc.telemed.dto.response.EndResponse;
+import npng.handdoc.telemed.dto.response.HistoryItemResponse;
+import npng.handdoc.telemed.dto.response.HistoryListResponse;
 import npng.handdoc.telemed.dto.response.JoinResponse;
 import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.telemed.exception.errorcode.TelemedErrorCode;
 import npng.handdoc.telemed.repository.TelemedRepository;
 import npng.handdoc.user.domain.type.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,12 +73,31 @@ public class TelemedService {
         return EndResponse.from(telemed);
     }
 
+    // 진료 내역 조회
+    public HistoryListResponse getHistory(Pageable pageable, Long userId){
+        Page<Telemed> telemedPage = telemedRepository.findByPatientIdAndDiagnosisStatusOrderByStartedAtDesc(
+                        userId, DiagnosisStatus.ENDED, pageable);
+        Page<HistoryItemResponse> historyItemResponsePage = telemedPage.map(t ->
+                HistoryItemResponse.from(t.getReservation(), t)
+        );
+
+        return HistoryListResponse.from(historyItemResponsePage);
+    }
+
     private Reservation findReservationOrElse(Long reservationId) {
         return reservationRepository.findById(reservationId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
     }
 
+    private Reservation findReservationByUserIdOrELse(Long userId) {
+        return reservationRepository.findByUserId(userId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
+
+    }
     private Telemed findTelemedOrELse(Long reservationId) {
         return telemedRepository.findByReservationId(reservationId).orElse(null);
+    }
+
+    private Telemed findTelemedByUserIdOrELse(Long userId) {
+        return telemedRepository.findByPatientId(userId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
     private Telemed findRoomOrElse(String roomId) {
