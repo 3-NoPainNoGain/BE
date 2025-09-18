@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ReservationItemResponse(
-        Long id,
+        Long reservationId,
         Long patientId,
         Long doctorProfileId,
         ReservationStatus status,

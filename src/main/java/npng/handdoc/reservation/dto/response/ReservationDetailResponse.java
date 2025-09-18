@@ -1,16 +1,19 @@
 package npng.handdoc.reservation.dto.response;
 
 import npng.handdoc.reservation.domain.Reservation;
+import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.domain.type.Symptom;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ReservationDetailResponse(
+        Long reservationId,
         String name,
         String residentId,
         String symptom,
         Long symptomDuration,
+        ReservationStatus status,
         String description,
         String doctorName,
         String hospitalName,
@@ -20,10 +23,12 @@ public record ReservationDetailResponse(
         LocalTime endTime) {
     public static ReservationDetailResponse from(Reservation reservation) {
         return new ReservationDetailResponse(
+                reservation.getId(),
                 reservation.getUser().getName(),
                 reservation.getUser().getResidentId(),
                 reservation.getSymptom().getLabel(),
                 reservation.getSymptomDuration(),
+                reservation.getStatus(),
                 reservation.getDescription(),
                 reservation.getDoctorProfile().getUser().getName(),
                 reservation.getDoctorProfile().getHospitalName(),
