@@ -1,11 +1,13 @@
 package npng.handdoc.reservation.dto.response;
 
 import npng.handdoc.reservation.domain.Reservation;
+import npng.handdoc.reservation.domain.type.Option;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.domain.type.Symptom;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 public record ReservationDetailResponse(
         Long reservationId,
@@ -13,6 +15,7 @@ public record ReservationDetailResponse(
         String residentId,
         String symptom,
         Long symptomDuration,
+        Set<Option> interpertationOption,
         ReservationStatus status,
         String description,
         String doctorName,
@@ -28,6 +31,7 @@ public record ReservationDetailResponse(
                 reservation.getUser().getResidentId(),
                 reservation.getSymptom().getLabel(),
                 reservation.getSymptomDuration(),
+                reservation.getInterpretationOption(),
                 reservation.getStatus(),
                 reservation.getDescription(),
                 reservation.getDoctorProfile().getUser().getName(),
