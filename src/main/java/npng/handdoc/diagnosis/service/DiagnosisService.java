@@ -5,10 +5,10 @@ import npng.handdoc.diagnosis.domain.ChatLog;
 import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.domain.type.MessageType;
 import npng.handdoc.diagnosis.domain.type.Sender;
-import npng.handdoc.diagnosis.dto.request.SignLogReq;
-import npng.handdoc.diagnosis.dto.response.SummaryAIRes;
+import npng.handdoc.diagnosis.dto.request.SignLogRequest;
+import npng.handdoc.diagnosis.dto.response.SummaryAIResponse;
 import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
-import npng.handdoc.diagnosis.dto.response.SummaryRes;
+import npng.handdoc.diagnosis.dto.response.SummaryResponse;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
 import npng.handdoc.diagnosis.repository.DiagnosisRepository;
@@ -49,7 +49,7 @@ public class DiagnosisService {
 
     // 수어 등록
     @Transactional
-    public void saveSignText(String diagnosisId, SignLogReq request){
+    public void saveSignText(String diagnosisId, SignLogRequest request){
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
         validateActive(diagnosis);
         ChatLog chatLog = ChatLog.builder()
@@ -81,12 +81,12 @@ public class DiagnosisService {
 
     // 진료 내용 요약
     @Transactional
-    public SummaryRes getSummary(String diagnosisId){
+    public SummaryResponse getSummary(String diagnosisId){
         Diagnosis diagnosis = findDiagnosisOrThrow(diagnosisId);
         validateInactive(diagnosis);
-        SummaryAIRes summaryAIRes = openAIService.summarize(diagnosis);
+        SummaryAIResponse summaryAIRes = openAIService.summarize(diagnosis);
         String consultationTime = calculateTime(diagnosis);
-        return SummaryRes.of(consultationTime, summaryAIRes.symptom(), summaryAIRes.impression(), summaryAIRes.prescription());
+        return SummaryResponse.of(consultationTime, summaryAIRes.symptom(), summaryAIRes.impression(), summaryAIRes.prescription());
     }
 
     // 진료 시간 계산

@@ -3,7 +3,7 @@ package npng.handdoc.telemed.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import npng.handdoc.diagnosis.dto.response.SummaryRes;
+import npng.handdoc.diagnosis.dto.response.SummaryResponse;
 import npng.handdoc.global.response.ApiResponse;
 import npng.handdoc.telemed.dto.request.SignRequest;
 import npng.handdoc.telemed.service.TelemedChatService;
@@ -60,8 +60,8 @@ public class TelemedController {
 
     @Operation(summary = "비대면 진료 요약 API", description = "비대면 진료 내용을 요약합니다. roomId를 입력하세요.")
     @GetMapping("/{roomId}/summary")
-    public ResponseEntity<SummaryRes> summary(@PathVariable String roomId){
-        SummaryRes summary = telemedChatService.saveSummary(roomId);
+    public ResponseEntity<SummaryResponse> summary(@PathVariable String roomId){
+        SummaryResponse summary = telemedChatService.saveSummary(roomId);
         return ResponseEntity.ok(summary);
     }
 

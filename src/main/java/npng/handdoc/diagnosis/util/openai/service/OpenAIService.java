@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.ChatLog;
 import npng.handdoc.diagnosis.domain.Diagnosis;
-import npng.handdoc.diagnosis.dto.response.SummaryAIRes;
+import npng.handdoc.diagnosis.dto.response.SummaryAIResponse;
 import npng.handdoc.diagnosis.util.openai.OpenAIApiClient;
 import npng.handdoc.diagnosis.util.openai.dto.Message;
 import npng.handdoc.telemed.domain.TelemedChatLog;
@@ -12,7 +12,6 @@ import npng.handdoc.telemed.domain.type.Sender;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -24,24 +23,24 @@ public class OpenAIService {
     private final ObjectMapper objectMapper;
 
     // 대면 요약
-    public SummaryAIRes summarize(Diagnosis diagnosis) {
+    public SummaryAIResponse summarize(Diagnosis diagnosis) {
         List<Message> messages = buildMessage(diagnosis.getChatLogList());
         String json = openAIApiClient.chatToJson(messages).block();
         try {
-            return objectMapper.readValue(json, SummaryAIRes.class);
+            return objectMapper.readValue(json, SummaryAIResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("OpenAI 응답 파싱 실패: " + json, e);
         }
     }
 
     // 비대면 요약
-    public SummaryAIRes summarize(TelemedChatLog telemedChatLog) {
+    public SummaryAIResponse summarize(TelemedChatLog telemedChatLog) {
         List<Message> messages = buildMessageFromTelemed(
                 telemedChatLog == null ? null : telemedChatLog.getMessageList()
         );
         String json = openAIApiClient.chatToJson(messages).block();
         try {
-            return objectMapper.readValue(json, SummaryAIRes.class);
+            return objectMapper.readValue(json, SummaryAIResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("OpenAI 응답 파싱 실패: " + json, e);
         }
