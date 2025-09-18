@@ -3,6 +3,7 @@ package npng.handdoc.reservation.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import npng.handdoc.global.entity.BaseEntity;
 import npng.handdoc.reservation.domain.type.Option;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
@@ -16,24 +17,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@Setter
 @Entity
 @Table(name="reservation")
 @RequiredArgsConstructor
 public class Reservation extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="symptom")
     @Enumerated(EnumType.STRING)
+    @Column(name="symptom")
     private Symptom symptom;
 
     @Column(name="symptom_duration")
     private Long symptomDuration;
 
-    @Column(name="status")
     @Enumerated(EnumType.STRING)
+    @Column(name="status")
     private ReservationStatus status;
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -55,11 +55,9 @@ public class Reservation extends BaseEntity {
     @Column(name="end_time")
     private LocalTime endTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="doctor_profile_id")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="doctor_profile_id")
     private DoctorProfile doctorProfile;
 }
