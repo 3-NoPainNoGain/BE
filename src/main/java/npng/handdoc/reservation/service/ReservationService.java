@@ -3,10 +3,11 @@ package npng.handdoc.reservation.service;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.reservation.domain.Reservation;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
-import npng.handdoc.reservation.dto.request.ReservationAcceptOrDenyRequest;
+import npng.handdoc.reservation.dto.request.ReservationDecisionRequest;
 import npng.handdoc.reservation.dto.request.ReservationCreateRequest;
+import npng.handdoc.reservation.dto.response.ReservationDetailResponse;
 import npng.handdoc.reservation.dto.response.ReservationListResponse;
-import npng.handdoc.reservation.dto.response.ReservationResponse;
+import npng.handdoc.reservation.dto.response.ReservationItemResponse;
 import npng.handdoc.reservation.exception.ReservationException;
 import npng.handdoc.reservation.exception.errorcode.ReservationErrorCode;
 import npng.handdoc.reservation.repository.ReservationRepository;
@@ -31,7 +32,7 @@ public class ReservationService {
 
     // 환자 예약 생성
     @Transactional
-    public ReservationResponse create(Long userId, ReservationCreateRequest request) {
+    public ReservationItemResponse create(Long userId, ReservationCreateRequest request) {
 
         if (!request.startTime().isBefore(request.endTime())) {
             throw new ReservationException(ReservationErrorCode.INVALID_TIME_RANGE);
@@ -53,7 +54,7 @@ public class ReservationService {
                 .build();
 
         reservationRepository.save(reservation);
-        return ReservationResponse.from(reservation);
+        return ReservationItemResponse.from(reservation);
     }
 
     // 환자 예약 취소
@@ -67,18 +68,18 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public ReservationListResponse getReservationList(Long doctorProfileId, Pageable pageable) {
         Page<Reservation> reservationPage = reservationRepository.findByDoctorProfile_Id(doctorProfileId, pageable);
-        Page<ReservationResponse> reservationResponsePage = reservationPage.map(r -> ReservationResponse.from(r));
+        Page<ReservationItemResponse> reservationResponsePage = reservationPage.map(r -> ReservationItemResponse.from(r));
         return ReservationListResponse.from(reservationResponsePage);
     }
 
     @Transactional(readOnly = true)
-    public ReservationResponse getReservation(Long userId, Long reservationId) {
+    public ReservationDetailResponse getReservation(Long userId, Long reservationId) {
         Reservation reservation = getReservationOrThrowByPatient(userId, reservationId);
-        return ReservationResponse.from(reservation);
+        return ReservationDetailResponse.from(reservation);
     }
 
     @Transactional
-    public void acceptOrDeny(Long reservationId, Long doctorUserId, ReservationAcceptOrDenyRequest request) {
+    public void acceptOrDeny(Long reservationId, Long doctorUserId, ReservationDecisionRequest request) {
         Reservation reservation = getReservationOrThrowByDoctor(doctorUserId, reservationId);
         ReservationStatus status = request.accept() ? ReservationStatus.CONFIRMED : ReservationStatus.CANCELED;
         reservation.changeStatus(status);

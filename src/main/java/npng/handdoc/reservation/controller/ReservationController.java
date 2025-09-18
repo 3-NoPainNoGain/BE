@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.global.response.ApiResponse;
-import npng.handdoc.reservation.dto.request.ReservationAcceptOrDenyRequest;
+import npng.handdoc.reservation.dto.request.ReservationDecisionRequest;
 import npng.handdoc.reservation.dto.request.ReservationCreateRequest;
 import npng.handdoc.reservation.service.ReservationService;
 import npng.handdoc.user.util.CustomUserDetails;
@@ -58,7 +58,7 @@ public class ReservationController {
     @PostMapping("/{reservationId}/accept")
     public ResponseEntity<ApiResponse<Object>> acceptOrDeny(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                             @PathVariable Long reservationId,
-                                                            @RequestBody ReservationAcceptOrDenyRequest request) {
+                                                            @RequestBody ReservationDecisionRequest request) {
         reservationService.acceptOrDeny(reservationId, userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.from(ApiResponse.EMPTY_RESPONSE));
     }

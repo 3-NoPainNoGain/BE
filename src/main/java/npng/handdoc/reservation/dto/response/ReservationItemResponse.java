@@ -6,7 +6,7 @@ import npng.handdoc.reservation.domain.type.ReservationStatus;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record ReservationResponse(
+public record ReservationItemResponse(
         Long id,
         Long patientId,
         Long doctorProfileId,
@@ -17,8 +17,8 @@ public record ReservationResponse(
         LocalTime startTime,
         LocalTime endTime
 ) {
-    public static ReservationResponse from(Reservation reservation) {
-        return new ReservationResponse(
+    public static ReservationItemResponse from(Reservation reservation) {
+        return new ReservationItemResponse(
                 reservation.getId(),
                 reservation.getUser().getId(),
                 reservation.getDoctorProfile().getId(),
