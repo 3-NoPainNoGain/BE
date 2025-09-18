@@ -50,6 +50,7 @@ public class ReservationService {
                 .status(ReservationStatus.REQUESTED)
                 .symptom(request.symptom())
                 .symptomDuration(request.symptomDuration())
+                .interpretationOption(request.interpretationOption())
                 .description(request.description())
                 .slotDate(request.slotDate())
                 .startTime(request.startTime())

@@ -79,13 +79,13 @@ public class Reservation extends BaseEntity {
     }
 
     @Builder
-    public Reservation(User user, DoctorProfile doctor, ReservationStatus status, Symptom symptom, Long symptomDuration, String description, LocalDate slotDate, LocalTime startTime, LocalTime endTime){
+    public Reservation(User user, DoctorProfile doctor, ReservationStatus status, Symptom symptom, Long symptomDuration, Set<Option> interpretationOption, String description, LocalDate slotDate, LocalTime startTime, LocalTime endTime){
         this.user = user;
         this.doctorProfile = doctor;
         this.status = status;
         this.symptom = symptom;
         this.symptomDuration = symptomDuration;
-        this.description = description;
+        this.interpretationOption = interpretationOption;
         this.slotDate = slotDate;
         this.startTime = startTime;
         this.endTime = endTime;
