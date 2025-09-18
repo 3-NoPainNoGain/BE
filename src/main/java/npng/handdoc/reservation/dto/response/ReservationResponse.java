@@ -1,23 +1,33 @@
 package npng.handdoc.reservation.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import npng.handdoc.reservation.domain.Reservation;
+import npng.handdoc.reservation.domain.type.ReservationStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Schema(description = "예약 단건 응답")
 public record ReservationResponse(
         Long id,
         Long patientId,
         Long doctorProfileId,
-        String status,
+        ReservationStatus status,
         String symptom,
-        Long symptomDuration,
         String description,
         LocalDate slotDate,
         LocalTime startTime,
-        LocalTime endTime,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
-) {}
+        LocalTime endTime
+) {
+    public static ReservationResponse from(Reservation reservation) {
+        return new ReservationResponse(
+                reservation.getId(),
+                reservation.getUser().getId(),
+                reservation.getDoctorProfile().getId(),
+                reservation.getStatus(),
+                reservation.getSymptom().getLabel(),
+                reservation.getDescription(),
+                reservation.getSlotDate(),
+                reservation.getStartTime(),
+                reservation.getEndTime()
+        );
+    }
+}
