@@ -65,19 +65,22 @@ public class ReservationService {
         reservation.changeStatus(ReservationStatus.CANCELED);
     }
 
-    @Transactional(readOnly = true)
-    public ReservationListResponse getReservationList(Long doctorProfileId, Pageable pageable) {
-        Page<Reservation> reservationPage = reservationRepository.findByDoctorProfile_Id(doctorProfileId, pageable);
-        Page<ReservationItemResponse> reservationResponsePage = reservationPage.map(r -> ReservationItemResponse.from(r));
-        return ReservationListResponse.from(reservationResponsePage);
-    }
-
+    // 환자 예약 단 건 조회
     @Transactional(readOnly = true)
     public ReservationDetailResponse getReservation(Long userId, Long reservationId) {
         Reservation reservation = getReservationOrThrowByPatient(userId, reservationId);
         return ReservationDetailResponse.from(reservation);
     }
 
+    // 의사 예약 리스트 조회
+    @Transactional(readOnly = true)
+    public ReservationListResponse getReservationList(Long doctorProfileId, Pageable pageable) {
+        Page<Reservation> reservationPage = reservationRepository.findByDoctorProfile_Id(doctorProfileId, pageable);
+        Page<ReservationItemResponse> reservationResponsePage = reservationPage.map(ReservationItemResponse::from);
+        return ReservationListResponse.from(reservationResponsePage);
+    }
+
+    // 의사 예약 수락 또는 거절
     @Transactional
     public void acceptOrDeny(Long reservationId, Long doctorUserId, ReservationDecisionRequest request) {
         Reservation reservation = getReservationOrThrowByDoctor(doctorUserId, reservationId);
