@@ -13,6 +13,7 @@ import npng.handdoc.user.util.CustomUserDetails;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,10 +32,11 @@ public class ReservationController {
         return ResponseEntity.ok(ApiResponse.from(reservationService.create(userDetails.getId(), request)));
     }
 
-    @Operation(summary = "(환자) 진료 예약 단건 상세 조회", description = "환자 로그인을 진행한 다음 호출해주세요.")
+    @Operation(summary = "(환자, 의사) 진료 예약 단건 상세 조회", description = "환자와 의사 모두 같은 API를 활용합니다.")
+    @PreAuthorize("hasAnyRole('PATIENT','DOCTOR')")
     @GetMapping("/{reservationId}")
     public ResponseEntity<ApiResponse<Object>> getReservation(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long reservationId) {
-        return ResponseEntity.ok(ApiResponse.from(reservationService.getReservation(userDetails.getId(), reservationId)));
+        return ResponseEntity.ok(ApiResponse.from(reservationService.getReservation(userDetails, reservationId)));
     }
 
     @Operation(summary = "(환자) 진료 예약 취소", description = "환자 로그인을 진행한 다음 호출해주세요.")

@@ -17,10 +17,13 @@ import npng.handdoc.user.exception.UserException;
 import npng.handdoc.user.exception.errorcode.UserErrorCode;
 import npng.handdoc.user.repository.DoctorProfileRepository;
 import npng.handdoc.user.repository.UserRepository;
+import npng.handdoc.user.util.CustomUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasRole;
 
 @Service
 @RequiredArgsConstructor
@@ -65,11 +68,21 @@ public class ReservationService {
         reservation.changeStatus(ReservationStatus.CANCELED);
     }
 
-    // 환자 예약 단 건 조회
+    // 예약 단 건 조회
     @Transactional(readOnly = true)
-    public ReservationDetailResponse getReservation(Long userId, Long reservationId) {
-        Reservation reservation = getReservationOrThrowByPatient(userId, reservationId);
-        return ReservationDetailResponse.from(reservation);
+    public ReservationDetailResponse getReservation(CustomUserDetails userDetails, Long reservationId) {
+
+        if (hasRole(userDetails, "DOCTOR")){
+            Reservation reservation = getReservationOrThrowByDoctor(userDetails.getId(), reservationId);
+            return ReservationDetailResponse.from(reservation);
+
+        }
+
+        if (hasRole(userDetails, "PATIENT")){
+            Reservation reservation = getReservationOrThrowByPatient(userDetails.getId(), reservationId);
+            return ReservationDetailResponse.from(reservation);
+        }
+        throw new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND);
     }
 
     // 의사 예약 리스트 조회
@@ -88,8 +101,8 @@ public class ReservationService {
         reservation.changeStatus(status);
     }
 
-    private Reservation getReservationOrThrowByDoctor(Long reservationId, Long doctorProfileId) {
-        return reservationRepository.findByIdAndDoctorProfile_Id(reservationId, doctorProfileId)
+    private Reservation getReservationOrThrowByDoctor(Long doctorProfileId, Long reservationId) {
+        return reservationRepository.findByIdAndDoctorProfile_User_Id(reservationId, doctorProfileId)
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }
 
@@ -103,5 +116,11 @@ public class ReservationService {
 
     private DoctorProfile getDoctorOrThrow(Long doctorProfileId) {
         return doctorProfileRepository.findById(doctorProfileId).orElseThrow(()-> new UserException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    private boolean hasRole(CustomUserDetails principal, String role) {
+        String target = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+        return principal.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals(target));
     }
 }
