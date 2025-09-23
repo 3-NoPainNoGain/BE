@@ -50,7 +50,7 @@ public class TelemedController {
     }
 
     @Operation(summary = "(의사) 텍스트로 변환된 음성을 db에 저장하는 API", description = "의사의 음성 텍스트를 db에 저장합니다.")
-    @PostMapping(value = "/{roomId}/speech", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{roomId}/speech-doctor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Object>> speech(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                       @PathVariable String roomId,
                                                       @RequestPart("file") MultipartFile file)throws Exception{
