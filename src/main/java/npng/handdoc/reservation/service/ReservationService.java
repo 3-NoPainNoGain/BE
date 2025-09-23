@@ -88,8 +88,12 @@ public class ReservationService {
 
     // 의사 예약 리스트 조회
     @Transactional(readOnly = true)
-    public ReservationListResponse getReservationList(Long doctorProfileId, Pageable pageable) {
-        Page<Reservation> reservationPage = reservationRepository.findByDoctorProfile_Id(doctorProfileId, pageable);
+    public ReservationListResponse getReservationList(Long doctorUserId, Pageable pageable) {
+        DoctorProfile doctorProfile = doctorProfileRepository.findByUserId(doctorUserId) // ← 언더스코어 제거
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        Page<Reservation> reservationPage =
+                reservationRepository.findByDoctorProfile_Id(doctorProfile.getId(), pageable);
         Page<ReservationItemResponse> reservationResponsePage = reservationPage.map(ReservationItemResponse::from);
         return ReservationListResponse.from(reservationResponsePage);
     }
