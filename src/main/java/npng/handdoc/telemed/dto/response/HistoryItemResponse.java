@@ -22,6 +22,6 @@ public record HistoryItemResponse(
                 reservation.getEndTime(),
                 reservation.getDoctorProfile().getUser().getName(),
                 reservation.getDoctorProfile().getHospitalName(),
-                telemed.getSummary().getSymptom());
+                reservation.getSymptom().getLabel());
     }
 }
