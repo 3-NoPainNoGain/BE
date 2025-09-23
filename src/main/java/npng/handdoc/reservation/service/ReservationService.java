@@ -88,10 +88,8 @@ public class ReservationService {
 
     // 의사 예약 리스트 조회
     @Transactional(readOnly = true)
-    public ReservationListResponse getReservationList(Long doctorUserId, Pageable pageable) {
-        DoctorProfile doctorProfile = doctorProfileRepository.findByUserId(doctorUserId) // ← 언더스코어 제거
-                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
-
+    public ReservationListResponse getReservationList(Long userId, Pageable pageable) {
+        DoctorProfile doctorProfile = getDoctorOrThrowByUserId(userId);
         Page<Reservation> reservationPage =
                 reservationRepository.findByDoctorProfile_Id(doctorProfile.getId(), pageable);
         Page<ReservationItemResponse> reservationResponsePage = reservationPage.map(ReservationItemResponse::from);
@@ -121,6 +119,10 @@ public class ReservationService {
 
     private DoctorProfile getDoctorOrThrow(Long doctorProfileId) {
         return doctorProfileRepository.findById(doctorProfileId).orElseThrow(()-> new UserException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    private DoctorProfile getDoctorOrThrowByUserId(Long userId){
+        return doctorProfileRepository.findByUserId(userId).orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
     }
 
     private boolean hasRole(CustomUserDetails principal, String role) {
