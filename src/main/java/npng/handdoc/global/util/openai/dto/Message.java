@@ -1,4 +1,4 @@
-package npng.handdoc.diagnosis.util.openai.dto;
+package npng.handdoc.global.util.openai.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

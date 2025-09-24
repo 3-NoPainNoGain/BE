@@ -1,12 +1,12 @@
-package npng.handdoc.diagnosis.util.openai.service;
+package npng.handdoc.global.util.openai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.ChatLog;
 import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.dto.response.SummaryAIResponse;
-import npng.handdoc.diagnosis.util.openai.OpenAIApiClient;
-import npng.handdoc.diagnosis.util.openai.dto.Message;
+import npng.handdoc.global.util.openai.OpenAIApiClient;
+import npng.handdoc.global.util.openai.dto.Message;
 import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.Sender;
 import org.springframework.stereotype.Service;
