@@ -12,7 +12,7 @@ public record HistoryDetailResponse(
                 chatLog.getRoomId(),
                 chatLog.getMessageList().stream()
                         .map(m -> new ChatResponse(
-                                m.getSender().getLabel(),
+                                m.getSender(),
                                 m.getMessage(),
                                 m.getTimestamp()
                         )).toList()
