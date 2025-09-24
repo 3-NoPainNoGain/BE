@@ -10,7 +10,6 @@ import npng.handdoc.telemed.dto.request.SignRequest;
 import npng.handdoc.telemed.service.TelemedChatService;
 import npng.handdoc.telemed.service.TelemedService;
 import npng.handdoc.user.util.CustomUserDetails;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -56,7 +55,7 @@ public class TelemedController {
     public ResponseEntity<ApiResponse<Object>> speech(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                       @PathVariable String roomId,
                                                       @RequestPart("file") MultipartFile file)throws Exception{
-        String result = telemedChatService.saveSpeechText(userDetails.getId(), roomId, file);
+        String result = telemedChatService.saveDoctorSpeechText(userDetails.getId(), roomId, file);
         return ResponseEntity.ok(ApiResponse.from(result));
     }
 
@@ -66,6 +65,15 @@ public class TelemedController {
                                                              @PathVariable String roomId,
                                                              @RequestPart("file") MultipartFile file)throws Exception{
         return ResponseEntity.ok(ApiResponse.from(telemedChatService.getSpeechText(userDetails.getId(), roomId, file)));
+    }
+
+    @Operation(summary = "(환자) 선택한 3가지 중 하나를 선택해 의사에게 전송하는 API", description = "한 가지를 의사에게 전달하고 db에 저장합니다.")
+    @PostMapping("/{roomId}/speech-patient/send")
+    public ResponseEntity<ApiResponse<Object>> sendSpeech(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                          @PathVariable String roomId,
+                                                          @RequestBody SendSpeechTextRequest request) {
+        telemedChatService.savePatientSpeechText(userDetails.getId(), roomId, request.selectedText());
+        return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 
     @Operation(summary = "비대면 진료 요약 API", description = "비대면 진료가 종료된 다음 해당 진료의 내용을 요약합니다. roomId를 입력하세요.")

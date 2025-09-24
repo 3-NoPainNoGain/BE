@@ -1,4 +1,6 @@
 package npng.handdoc.telemed.dto.request;
 
-public record SendSpeechTextRequest() {
+public record SendSpeechTextRequest(
+        String selectedText
+) {
 }

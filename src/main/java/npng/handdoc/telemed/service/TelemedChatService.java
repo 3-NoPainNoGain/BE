@@ -14,6 +14,7 @@ import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.DiagnosisStatus;
 import npng.handdoc.telemed.domain.type.MessageType;
 import npng.handdoc.telemed.domain.type.Sender;
+import npng.handdoc.telemed.dto.request.SendSpeechTextRequest;
 import npng.handdoc.telemed.dto.request.SignRequest;
 import npng.handdoc.telemed.dto.response.SpeechCandidateResponse;
 import npng.handdoc.telemed.exception.TelemedException;
@@ -68,7 +69,7 @@ public class TelemedChatService {
 
     // 음성 -> 텍스트 변환 후 저장
     @Transactional
-    public String saveSpeechText(Long userId, String roomId, MultipartFile file) throws IOException {
+    public String saveDoctorSpeechText(Long userId, String roomId, MultipartFile file) throws IOException {
         User user = findUserOrElse(userId);
         Telemed telemed = findRoomOrElse(roomId);
         validateDoctorAccess(telemed, user);
@@ -79,6 +80,7 @@ public class TelemedChatService {
         TelemedChatLog.Message messgae = TelemedChatLog.Message.builder()
                 .sender(Sender.DOCTOR)
                 .messageType(MessageType.STT)
+                .message(text)
                 .timestamp(LocalDateTime.now())
                 .build();
 
@@ -102,6 +104,26 @@ public class TelemedChatService {
         List<String> candidates = openAIService.generateCandidates(text);
 
         return SpeechCandidateResponse.from(candidates);
+    }
+
+    // 3가지 후보 중 하나를 선택하여 전송
+    @Transactional
+    public void savePatientSpeechText(Long userId, String roomId, String selectedText){
+        User user = findUserOrElse(userId);
+        Telemed telemed = findRoomOrElse(roomId);
+        validatePatientAccess(telemed, user);
+
+        TelemedChatLog.Message message = TelemedChatLog.Message.builder()
+                .sender(Sender.PATIENT)
+                .messageType(MessageType.STT)
+                .message(selectedText)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        TelemedChatLog chatLog = telemedChatRepository.findByRoomId(roomId)
+                .orElseGet(()-> new TelemedChatLog(null, roomId, new ArrayList<>()));
+        chatLog.getMessageList().add(message);
+        telemedChatRepository.save(chatLog);
     }
 
     // 진료 내용 요약
