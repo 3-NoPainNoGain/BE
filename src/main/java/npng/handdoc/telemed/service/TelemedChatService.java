@@ -5,9 +5,9 @@ import npng.handdoc.diagnosis.dto.response.SummaryAIResponse;
 import npng.handdoc.diagnosis.dto.response.SummaryResponse;
 import npng.handdoc.diagnosis.exception.DiagnosisException;
 import npng.handdoc.diagnosis.exception.errorcode.DiagnosisErrorCode;
-import npng.handdoc.diagnosis.util.naver.NaverCsrClient;
-import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
-import npng.handdoc.diagnosis.util.openai.service.OpenAIService;
+import npng.handdoc.global.util.naver.NaverCsrClient;
+import npng.handdoc.global.util.naver.dto.ClovaCsrRes;
+import npng.handdoc.global.util.openai.service.OpenAIService;
 import npng.handdoc.telemed.domain.Summary;
 import npng.handdoc.telemed.domain.Telemed;
 import npng.handdoc.telemed.domain.TelemedChatLog;
@@ -15,6 +15,7 @@ import npng.handdoc.telemed.domain.type.DiagnosisStatus;
 import npng.handdoc.telemed.domain.type.MessageType;
 import npng.handdoc.telemed.domain.type.Sender;
 import npng.handdoc.telemed.dto.request.SignRequest;
+import npng.handdoc.telemed.dto.response.SpeechCandidateResponse;
 import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.telemed.exception.errorcode.TelemedErrorCode;
 import npng.handdoc.telemed.repository.TelemedChatRepository;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.ROOM_NOT_FOUND;
 
@@ -85,6 +87,21 @@ public class TelemedChatService {
         chatLog.getMessageList().add(messgae);
         telemedChatRepository.save(chatLog);
         return text;
+    }
+
+    // 음성 -> 텍스트 변환 후 GPT 전송하여 3가지 예시 답변 반환
+    @Transactional
+    public SpeechCandidateResponse getSpeechText(Long userId, String roomId, MultipartFile file) throws IOException {
+        User user = findUserOrElse(userId);
+        Telemed telemed = findRoomOrElse(roomId);
+        validatePatientAccess(telemed, user);
+
+        ClovaCsrRes speechText = naverCsrClient.transcribe(file.getBytes());
+        String text = speechText.text();
+
+        List<String> candidates = openAIService.generateCandidates(text);
+
+        return SpeechCandidateResponse.from(candidates);
     }
 
     // 진료 내용 요약

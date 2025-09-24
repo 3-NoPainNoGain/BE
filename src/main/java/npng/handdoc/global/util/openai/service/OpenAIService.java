@@ -1,5 +1,6 @@
 package npng.handdoc.global.util.openai.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.ChatLog;
@@ -43,6 +44,33 @@ public class OpenAIService {
             return objectMapper.readValue(json, SummaryAIResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("OpenAI 응답 파싱 실패: " + json, e);
+        }
+    }
+
+    // 환자 발화 교정 + 후보 3개 생성
+    public List<String> generateCandidates(String text){
+        String systemPrompt = """
+                당신의 구음장애 환자의 발화를 교정하는 도우미입니다.
+                주어진 문장을 이해하고, 
+                
+                규칙: 
+                - 반드시 JSON 배열로 출력 (예 : ["문장1", "문장2", "문장3"])
+                
+                """;
+
+        String userPrompt = "원문" + text;
+
+        List<Message> messages = List.of(
+                new Message("system", systemPrompt),
+                new Message("user", userPrompt)
+        );
+
+        String json = openAIApiClient.chatToJson(messages).block();
+
+        try{
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("OpenAI 후보 응답 파싱 실패: " + json, e);
         }
     }
 
@@ -110,12 +138,5 @@ public class OpenAIService {
                 - 한국어로 작성.
                 - 대화에 없는 정보는 "없음".
                 """;
-    }
-
-    private String labelOf(Sender sender) {
-        return switch (sender) {
-            case DOCTOR -> "의사";
-            case PATIENT -> "환자";
-        };
     }
 }
