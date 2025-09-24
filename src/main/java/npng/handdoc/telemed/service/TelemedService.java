@@ -5,14 +5,15 @@ import npng.handdoc.reservation.domain.Reservation;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.exception.ReservationException;
 import npng.handdoc.reservation.repository.ReservationRepository;
+import npng.handdoc.telemed.domain.Summary;
 import npng.handdoc.telemed.domain.Telemed;
+import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.DiagnosisStatus;
-import npng.handdoc.telemed.dto.response.EndResponse;
-import npng.handdoc.telemed.dto.response.HistoryItemResponse;
-import npng.handdoc.telemed.dto.response.HistoryListResponse;
-import npng.handdoc.telemed.dto.response.JoinResponse;
+import npng.handdoc.telemed.dto.response.*;
 import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.telemed.exception.errorcode.TelemedErrorCode;
+import npng.handdoc.telemed.repository.SummaryRepository;
+import npng.handdoc.telemed.repository.TelemedChatRepository;
 import npng.handdoc.telemed.repository.TelemedRepository;
 import npng.handdoc.user.domain.type.Role;
 import org.springframework.data.domain.Page;
@@ -23,8 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static npng.handdoc.reservation.exception.errorcode.ReservationErrorCode.RESERVATION_NOT_FOUND;
-import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.RESERVATION_NOT_CONFIRMED;
-import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.ROOM_NOT_FOUND;
+import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +36,8 @@ public class TelemedService {
     private static final String WS_URL = "wss://handdoc.store/ws/signaling";
     private static final List<JoinResponse.IceServer> DEFAULT_ICE =
             List.of(new JoinResponse.IceServer("stun:stun.l.google.com:19302"));
+    private final TelemedChatRepository telemedChatRepository;
+    private final SummaryRepository summaryRepository;
 
     public JoinResponse join(Long userId, Long reservationId){
         Reservation reservation = findReservationOrElse(reservationId);
@@ -84,24 +86,37 @@ public class TelemedService {
         return HistoryListResponse.from(historyItemResponsePage);
     }
 
+    // 진료 내역 상세 조회
+    @Transactional(readOnly = true)
+    public HistoryDetailResponse getHistoryDetail(Long userId, String roomId){
+        Telemed telemed = findRoomOrElse(roomId);
+        if (!telemed.getPatientId().equals(userId)) {
+            throw new TelemedException(NOT_PARTICIPANT);
+        }
+        TelemedChatLog chatLog = findTelmedChatLogOrElse(roomId);
+        Summary summary = findSummaryOrElse(roomId);
+        return HistoryDetailResponse.from(chatLog, summary);
+    }
+
     private Reservation findReservationOrElse(Long reservationId) {
         return reservationRepository.findById(reservationId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
     }
 
-    private Reservation findReservationByUserIdOrELse(Long userId) {
-        return reservationRepository.findByUserId(userId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
-
-    }
     private Telemed findTelemedOrELse(Long reservationId) {
         return telemedRepository.findByReservationId(reservationId).orElse(null);
     }
 
-    private Telemed findTelemedByUserIdOrELse(Long userId) {
-        return telemedRepository.findByPatientId(userId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
-    }
-
     private Telemed findRoomOrElse(String roomId) {
         return telemedRepository.findById(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
+    }
+
+    private TelemedChatLog findTelmedChatLogOrElse(String roomId) {
+        return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
+
+    }
+
+    private Summary findSummaryOrElse(String roomId){
+        return summaryRepository.findByTelemed_Id(roomId).orElseThrow(()-> new TelemedException(SUMMARY_NOT_FOUND));
     }
 
     private Telemed createFromReservation(Reservation reservation) {
