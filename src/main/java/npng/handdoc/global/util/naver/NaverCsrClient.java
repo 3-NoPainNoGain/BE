@@ -1,7 +1,7 @@
-package npng.handdoc.diagnosis.util.naver;
+package npng.handdoc.global.util.naver;
 
 import lombok.RequiredArgsConstructor;
-import npng.handdoc.diagnosis.util.naver.dto.ClovaCsrRes;
+import npng.handdoc.global.util.naver.dto.ClovaCsrRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

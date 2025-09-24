@@ -1,12 +1,13 @@
-package npng.handdoc.diagnosis.util.openai.service;
+package npng.handdoc.global.util.openai.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import npng.handdoc.diagnosis.domain.ChatLog;
 import npng.handdoc.diagnosis.domain.Diagnosis;
 import npng.handdoc.diagnosis.dto.response.SummaryAIResponse;
-import npng.handdoc.diagnosis.util.openai.OpenAIApiClient;
-import npng.handdoc.diagnosis.util.openai.dto.Message;
+import npng.handdoc.global.util.openai.OpenAIApiClient;
+import npng.handdoc.global.util.openai.dto.Message;
 import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.Sender;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,48 @@ public class OpenAIService {
             return objectMapper.readValue(json, SummaryAIResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("OpenAI 응답 파싱 실패: " + json, e);
+        }
+    }
+
+    // 환자 발화 교정 + 후보 3개 생성
+    public List<String> generateCandidates(String text){
+        // 시스템 프롬프트
+        String systemPrompt = """
+                당신은 구음장애 환자의 발화를 '의미를 보존한 채' 가장 자연스러운 한국어 문장으로 정제하는 도우미입니다. 
+                
+                규칙: 
+                - 의미 보존: 원문 의미를 절대로 변경하지 마세요. 
+                - 과교정 금지: 문법/띄어쓰기/어휘를 '경미하게'만 수정하세요. 새로운 정보 추가나 삭제 절대 금지
+                - 불확실 시 보수적: 의미가 모호하면 원문을 후보에 포함하세요. 
+                - 출력: 반드시 JSON 문자열 배열 하나만 출력하세요.
+                - 예시: ["문장1", "문장2", "문장3"] 
+                - JSON 배열 외에는 어떤 설명도 하지 마세요. 
+                """;
+
+        // 사용자 프롬프트
+        String userPrompt = """
+        원문: %s
+
+        요구사항:
+        1) 후보 3개를 만들어 주세요.
+        2) 1번 후보: 원문과 가장 가까운 '보수적 교정'(띄어쓰기/어순/문법 최소 수정).
+        3) 2~3번 후보: 같은 의미의 자연스러운 '경미한 바꿔 말하기'(의미 동일, 정보 불변).
+        4) 의미가 확실치 않으면 해당 후보는 원문을 그대로 사용.
+
+        출력은 오직 JSON 배열만 출력하세요.
+        """.formatted(text);
+
+        List<Message> messages = List.of(
+                new Message("system", systemPrompt),
+                new Message("user", userPrompt)
+        );
+
+        String json = openAIApiClient.chatToJson(messages).block();
+
+        try{
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("OpenAI 후보 응답 파싱 실패: " + json, e);
         }
     }
 
@@ -110,12 +153,5 @@ public class OpenAIService {
                 - 한국어로 작성.
                 - 대화에 없는 정보는 "없음".
                 """;
-    }
-
-    private String labelOf(Sender sender) {
-        return switch (sender) {
-            case DOCTOR -> "의사";
-            case PATIENT -> "환자";
-        };
     }
 }

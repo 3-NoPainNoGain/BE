@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record HistoryItemResponse(
+        String roomId,
         LocalDate slotDate,
         LocalTime startTime,
         LocalTime endTime,
@@ -17,11 +18,12 @@ public record HistoryItemResponse(
 
     public static HistoryItemResponse from(Reservation reservation, Telemed telemed) {
         return new HistoryItemResponse(
+                telemed.getId(),
                 reservation.getSlotDate(),
                 reservation.getStartTime(),
                 reservation.getEndTime(),
                 reservation.getDoctorProfile().getUser().getName(),
                 reservation.getDoctorProfile().getHospitalName(),
-                telemed.getSummary().getSymptom());
+                reservation.getSymptom().getLabel());
     }
 }
