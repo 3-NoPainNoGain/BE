@@ -67,7 +67,7 @@ public class TelemedChatService {
         telemedChatRepository.save(chatLog);
     }
 
-    // 음성 -> 텍스트 변환 후 저장
+    // (의사) 음성 -> 텍스트 변환 후 저장
     @Transactional
     public String saveDoctorSpeechText(Long userId, String roomId, MultipartFile file) throws IOException {
         User user = findUserOrElse(userId);
@@ -77,7 +77,7 @@ public class TelemedChatService {
         ClovaCsrRes speechText = naverCsrClient.transcribe(file.getBytes());
         String text = speechText.text();
 
-        TelemedChatLog.Message messgae = TelemedChatLog.Message.builder()
+        TelemedChatLog.Message message = TelemedChatLog.Message.builder()
                 .sender(Sender.DOCTOR)
                 .messageType(MessageType.STT)
                 .message(text)
@@ -86,7 +86,31 @@ public class TelemedChatService {
 
         TelemedChatLog chatLog = telemedChatRepository.findByRoomId(roomId)
                 .orElseGet(()-> new TelemedChatLog(null, roomId, new ArrayList<>()));
-        chatLog.getMessageList().add(messgae);
+        chatLog.getMessageList().add(message);
+        telemedChatRepository.save(chatLog);
+        return text;
+    }
+
+    // (환자) 음성 -> 텍스트 변환 후 저장
+    @Transactional
+    public String savePatientNormalSpeechText(Long userId, String roomId, MultipartFile file) throws IOException {
+        User user = findUserOrElse(userId);
+        Telemed telemed = findRoomOrElse(roomId);
+        validatePatientAccess(telemed, user);
+
+        ClovaCsrRes normalText = naverCsrClient.transcribe(file.getBytes());
+        String text = normalText.text();
+
+        TelemedChatLog.Message message = TelemedChatLog.Message.builder()
+                .sender(Sender.PATIENT)
+                .messageType(MessageType.STT)
+                .message(text)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        TelemedChatLog chatLog = telemedChatRepository.findByRoomId(roomId)
+                .orElseGet(()-> new TelemedChatLog(null, roomId, new ArrayList<>()));
+        chatLog.getMessageList().add(message);
         telemedChatRepository.save(chatLog);
         return text;
     }

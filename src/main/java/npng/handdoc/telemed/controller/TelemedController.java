@@ -50,12 +50,21 @@ public class TelemedController {
         return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 
-    @Operation(summary = "(의사) 텍스트로 변환된 음성을 db에 저장하는 API", description = "의사의 음성 텍스트를 db에 저장합니다.")
+    @Operation(summary = "(의사) 음성을 텍스트로 변환하고 db에 저장하는 API", description = "의사의 음성 텍스트를 db에 저장합니다.")
     @PostMapping(value = "/{roomId}/speech-doctor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<Object>> speech(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<ApiResponse<Object>> speechDoctor(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                       @PathVariable String roomId,
                                                       @RequestPart("file") MultipartFile file)throws Exception{
         String result = telemedChatService.saveDoctorSpeechText(userDetails.getId(), roomId, file);
+        return ResponseEntity.ok(ApiResponse.from(result));
+    }
+
+    @Operation(summary = "(환자) 음성을 텍스트로 변환하고 db에 저장하는 API", description = "환자의 음성 텍스트를 db에 저장합니다.")
+    @PostMapping(value = "/{roomId}/speech-patient-normal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<Object>> speechPatientNormal(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                   @PathVariable String roomId,
+                                                                   @RequestPart("file") MultipartFile file)throws Exception{
+        String result = telemedChatService.savePatientNormalSpeechText(userDetails.getId(), roomId, file);
         return ResponseEntity.ok(ApiResponse.from(result));
     }
 
