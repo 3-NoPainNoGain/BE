@@ -59,6 +59,9 @@ dependencies{
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 	runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
 
+	// spring-ai
+	implementation "org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0"
+
 	// websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
