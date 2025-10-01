@@ -85,7 +85,7 @@ public class TelemedController {
         return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 
-    @Operation(summary = "비대면 진료 요약 API", description = "비대면 진료가 종료된 다음 해당 진료의 내용을 요약합니다. roomId를 입력하세요.")
+    @Operation(summary = "비대면 진료 요약 조회 API", description = "비대면 진료가 종료된 다음 해당 진료 요약을 조회합니다. roomId를 입력하세요.")
     @GetMapping("/{roomId}/summary")
     public ResponseEntity<SummaryResponse> summary(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                    @PathVariable String roomId){
