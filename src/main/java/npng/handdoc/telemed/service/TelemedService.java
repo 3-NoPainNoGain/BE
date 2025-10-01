@@ -85,6 +85,7 @@ public class TelemedService {
     }
 
     // 진료 내역 조회
+    @Transactional(readOnly = true)
     public HistoryListResponse getHistory(Pageable pageable, Long userId){
         Page<Telemed> telemedPage = telemedRepository.findByPatientIdAndDiagnosisStatusOrderByStartedAtDesc(
                         userId, DiagnosisStatus.ENDED, pageable);
@@ -101,7 +102,7 @@ public class TelemedService {
         if (!telemed.getPatientId().equals(userId)) {
             throw new TelemedException(NOT_PARTICIPANT);
         }
-        TelemedChatLog chatLog = findTelemedChatLogOrElse(roomId);
+        TelemedChatLog chatLog = findChatLogOrElse(roomId);
         Summary summary = findSummaryOrElse(roomId);
         return HistoryDetailResponse.from(chatLog, summary);
     }
@@ -123,6 +124,7 @@ public class TelemedService {
         telemed.addSummary(summary);
     }
 
+    // 시간 계산
     private String calculateTime(Telemed telemed) {
         LocalDateTime start = telemed.getStartedAt();
         LocalDateTime end = telemed.getEndedAt();
@@ -151,10 +153,6 @@ public class TelemedService {
 
     private Telemed findRoomOrElse(String roomId) {
         return telemedRepository.findById(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
-    }
-
-    private TelemedChatLog findTelemedChatLogOrElse(String roomId) {
-        return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
     private Summary findSummaryOrElse(String roomId){
