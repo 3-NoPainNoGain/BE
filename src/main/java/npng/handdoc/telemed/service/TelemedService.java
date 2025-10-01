@@ -155,7 +155,6 @@ public class TelemedService {
 
     private TelemedChatLog findTelemedChatLogOrElse(String roomId) {
         return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
-
     }
 
     private Summary findSummaryOrElse(String roomId){
