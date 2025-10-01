@@ -86,6 +86,7 @@ public class Reservation extends BaseEntity {
         this.symptom = symptom;
         this.symptomDuration = symptomDuration;
         this.interpretationOption = interpretationOption;
+        this.description = description;
         this.slotDate = slotDate;
         this.startTime = startTime;
         this.endTime = endTime;
