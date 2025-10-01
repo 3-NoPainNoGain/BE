@@ -51,8 +51,8 @@ public class TelemedService {
         if(reservation.getStatus() != ReservationStatus.CONFIRMED){
             throw new TelemedException(RESERVATION_NOT_CONFIRMED);
         }
-        Telemed telemed = findTelemedOrELse(reservationId);
-        Role role = resolveRole(reservation, telemed, userId);
+        Telemed telemed = findTelemedOrElse(reservationId);
+        Role role = assertParticipant(reservation, telemed, userId);
 
         // 방이 없으면 생성
         if(telemed == null){
@@ -71,7 +71,7 @@ public class TelemedService {
     @Transactional
     public EndResponse end(Long userId, String roomId){
         Telemed telemed = findRoomOrElse(roomId);
-        Role role = resolveRole(telemed, userId);
+        assertParticipant(telemed, userId);
 
         if(telemed.getDiagnosisStatus() == DiagnosisStatus.ENDED){
             throw new TelemedException(TelemedErrorCode.ALREADY_ROOM_ENDED);
@@ -145,7 +145,7 @@ public class TelemedService {
         return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
-    private Telemed findTelemedOrELse(Long reservationId) {
+    private Telemed findTelemedOrElse(Long reservationId) {
         return telemedRepository.findByReservationId(reservationId).orElse(null);
     }
 
@@ -169,7 +169,8 @@ public class TelemedService {
                 .build();
     }
 
-    private Role resolveRole(Reservation reservation, Telemed telemed, Long userId) {
+    // 참가자 검증
+    private Role assertParticipant(Reservation reservation, Telemed telemed, Long userId) {
         if (telemed != null){
             if (userId.equals(telemed.getPatientId())) return Role.ROLE_PATIENT;
             if (userId.equals(telemed.getDoctorId())) return Role.ROLE_DOCTOR;
@@ -183,9 +184,10 @@ public class TelemedService {
         throw new TelemedException(TelemedErrorCode.NOT_PARTICIPANT);
     }
 
-    private Role resolveRole(Telemed telemed, Long userId) {
-        if (userId.equals(telemed.getPatientId())) return Role.ROLE_PATIENT;
-        if (userId.equals(telemed.getDoctorId())) return Role.ROLE_DOCTOR;
+    // 참가자 검증
+    private void assertParticipant(Telemed telemed, Long userId) {
+        if (userId.equals(telemed.getPatientId())) return;
+        if (userId.equals(telemed.getDoctorId())) return;
         throw new TelemedException(TelemedErrorCode.NOT_PARTICIPANT);
     }
 }
