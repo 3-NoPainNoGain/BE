@@ -62,6 +62,6 @@ public class ReservationController {
                                                             @PathVariable Long reservationId,
                                                             @RequestBody ReservationDecisionRequest request) {
         reservationService.acceptOrDeny(reservationId, userDetails.getId(), request);
-        return ResponseEntity.ok(ApiResponse.from(ApiResponse.EMPTY_RESPONSE));
+        return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 }
