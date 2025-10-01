@@ -1,6 +1,8 @@
 package npng.handdoc.telemed.service;
 
 import lombok.RequiredArgsConstructor;
+import npng.handdoc.diagnosis.dto.response.SummaryAIResponse;
+import npng.handdoc.global.util.openai.service.OpenAIService;
 import npng.handdoc.reservation.domain.Reservation;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
 import npng.handdoc.reservation.exception.ReservationException;
@@ -21,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static npng.handdoc.reservation.exception.errorcode.ReservationErrorCode.RESERVATION_NOT_FOUND;
@@ -32,12 +36,14 @@ public class TelemedService {
 
     private final ReservationRepository reservationRepository;
     private final TelemedRepository telemedRepository;
+    private final TelemedChatRepository telemedChatRepository;
+    private final SummaryRepository summaryRepository;
+
+    private final OpenAIService openAIService;
 
     private static final String WS_URL = "wss://handdoc.store/ws/signaling";
     private static final List<JoinResponse.IceServer> DEFAULT_ICE =
             List.of(new JoinResponse.IceServer("stun:stun.l.google.com:19302"));
-    private final TelemedChatRepository telemedChatRepository;
-    private final SummaryRepository summaryRepository;
 
     @Transactional
     public JoinResponse join(Long userId, Long reservationId){
@@ -72,6 +78,9 @@ public class TelemedService {
         }
 
         telemed.markEnded();
+
+        // 진료 요약 생성
+        createSummary(telemed);
         return EndResponse.from(telemed);
     }
 
@@ -80,8 +89,7 @@ public class TelemedService {
         Page<Telemed> telemedPage = telemedRepository.findByPatientIdAndDiagnosisStatusOrderByStartedAtDesc(
                         userId, DiagnosisStatus.ENDED, pageable);
         Page<HistoryItemResponse> historyItemResponsePage = telemedPage.map(t ->
-                HistoryItemResponse.from(t.getReservation(), t)
-        );
+                HistoryItemResponse.from(t.getReservation(), t));
 
         return HistoryListResponse.from(historyItemResponsePage);
     }
@@ -98,8 +106,43 @@ public class TelemedService {
         return HistoryDetailResponse.from(chatLog, summary);
     }
 
+    // 요약 생성
+    private void createSummary(Telemed telemed) {
+        if (telemed.getSummary() != null) return;
+        if (summaryRepository.findByTelemed_Id(telemed.getId()).isPresent()) return;
+
+        TelemedChatLog telemedChatLog = findChatLogOrElse(telemed.getId());
+        SummaryAIResponse summaryAIRes = openAIService.summarize(telemedChatLog);
+        String consultationTime = calculateTime(telemed);
+        Summary summary = Summary.builder()
+                .consultationTime(consultationTime)
+                .symptom(summaryAIRes.symptom())
+                .impression(summaryAIRes.impression())
+                .prescription(summaryAIRes.prescription())
+                .build();
+        telemed.addSummary(summary);
+    }
+
+    private String calculateTime(Telemed telemed) {
+        LocalDateTime start = telemed.getStartedAt();
+        LocalDateTime end = telemed.getEndedAt();
+        return toHHMMSS(Duration.between(start, end));
+    }
+
+    private static String toHHMMSS(Duration d) {
+        long seconds = d.getSeconds();
+        long h = seconds / 3600;
+        long m = (seconds % 3600) / 60;
+        long s = seconds % 60;
+        return String.format("%02d:%02d:%02d", h, m, s);
+    }
+
     private Reservation findReservationOrElse(Long reservationId) {
         return reservationRepository.findById(reservationId).orElseThrow(()-> new ReservationException(RESERVATION_NOT_FOUND));
+    }
+
+    private TelemedChatLog findChatLogOrElse(String roomId) {
+        return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
     private Telemed findTelemedOrELse(Long reservationId) {

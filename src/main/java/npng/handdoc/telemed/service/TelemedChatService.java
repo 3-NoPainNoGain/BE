@@ -19,6 +19,7 @@ import npng.handdoc.telemed.dto.request.SignRequest;
 import npng.handdoc.telemed.dto.response.SpeechCandidateResponse;
 import npng.handdoc.telemed.exception.TelemedException;
 import npng.handdoc.telemed.exception.errorcode.TelemedErrorCode;
+import npng.handdoc.telemed.repository.SummaryRepository;
 import npng.handdoc.telemed.repository.TelemedChatRepository;
 import npng.handdoc.telemed.repository.TelemedRepository;
 import npng.handdoc.user.domain.User;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.ROOM_NOT_FOUND;
+import static npng.handdoc.telemed.exception.errorcode.TelemedErrorCode.SUMMARY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +48,7 @@ public class TelemedChatService {
     private final UserRepository userRepository;
     private final NaverCsrClient naverCsrClient;
     private final OpenAIService openAIService;
+    private final SummaryRepository summaryRepository;
 
     // 수어 등록
     @Transactional
@@ -150,25 +153,13 @@ public class TelemedChatService {
         telemedChatRepository.save(chatLog);
     }
 
-    // 진료 내용 요약
+    // 진료 내용 조회
     @Transactional
-    public SummaryResponse saveSummary(String roomId){
+    public SummaryResponse getSummary(Long userId, String roomId){
         Telemed telemed = findRoomOrElse(roomId);
         validateInactive(telemed);
-        TelemedChatLog telemedChatLog = findChatLogOrElse(roomId);
-
-        SummaryAIResponse summaryAIRes = openAIService.summarize(telemedChatLog);
-        String consultationTime = calculateTime(telemed);
-        Summary summary = Summary.builder()
-                .consultationTime(consultationTime)
-                .symptom(summaryAIRes.symptom())
-                .impression(summaryAIRes.impression())
-                .prescription(summaryAIRes.prescription())
-                .build();
-        telemed.addSummary(summary);
-
-        telemedRepository.save(telemed);
-        return SummaryResponse.of(consultationTime, summaryAIRes.symptom(), summaryAIRes.impression(), summaryAIRes.prescription());
+        Summary summary = findSummaryOrElse(roomId);
+        return SummaryResponse.of(summary.getConsultationTime(), summary.getSymptom(), summary.getImpression(), summary.getPrescription());
     }
 
     private User findUserOrElse(Long userId){
@@ -179,28 +170,14 @@ public class TelemedChatService {
         return telemedRepository.findById(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
-    private TelemedChatLog findChatLogOrElse(String roomId) {
-        return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
+    private Summary findSummaryOrElse(String roomId){
+        return summaryRepository.findByTelemed_Id(roomId).orElseThrow(()-> new TelemedException(SUMMARY_NOT_FOUND));
     }
 
     private void validateInactive(Telemed telemed) {
         if (telemed.getDiagnosisStatus() == DiagnosisStatus.ACTIVE) {
             throw new DiagnosisException(DiagnosisErrorCode.DIAGNOSIS_NOT_ENDED);
         }
-    }
-
-    private String calculateTime(Telemed telemed) {
-        LocalDateTime start = telemed.getStartedAt();
-        LocalDateTime end = telemed.getEndedAt();
-        return toHHMMSS(Duration.between(start, end));
-    }
-
-    private static String toHHMMSS(Duration d) {
-        long seconds = d.getSeconds();
-        long h = seconds / 3600;
-        long m = (seconds % 3600) / 60;
-        long s = seconds % 60;
-        return String.format("%02d:%02d:%02d", h, m, s);
     }
 
     private void validatePatientAccess(Telemed telemed, User user){
