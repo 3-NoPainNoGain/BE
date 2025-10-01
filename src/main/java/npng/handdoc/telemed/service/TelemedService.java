@@ -74,7 +74,7 @@ public class TelemedService {
         assertParticipant(telemed, userId);
 
         if(telemed.getDiagnosisStatus() == DiagnosisStatus.ENDED){
-            throw new TelemedException(TelemedErrorCode.ALREADY_ROOM_ENDED);
+            return EndResponse.from(telemed);
         }
 
         telemed.markEnded();

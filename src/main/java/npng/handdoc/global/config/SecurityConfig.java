@@ -44,6 +44,8 @@ public class SecurityConfig {
                                                 "/v3/api-docs/swagger-config").permitAll()
                                 // 비대면 관련
                                 .requestMatchers("/api/v2/telemed/**").authenticated()
+                                // 예약 관련
+                                .requestMatchers("/api/v2/reservation/**").authenticated()
                                 // 나머지는 허용
                                 .anyRequest().permitAll())
                 .exceptionHandling(exceptionHandler -> exceptionHandler
