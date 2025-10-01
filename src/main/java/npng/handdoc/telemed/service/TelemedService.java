@@ -39,6 +39,7 @@ public class TelemedService {
     private final TelemedChatRepository telemedChatRepository;
     private final SummaryRepository summaryRepository;
 
+    @Transactional
     public JoinResponse join(Long userId, Long reservationId){
         Reservation reservation = findReservationOrElse(reservationId);
         if(reservation.getStatus() != ReservationStatus.CONFIRMED){
@@ -58,7 +59,6 @@ public class TelemedService {
 
         // 둘 다 입장하면 ACTIVE 전환
         telemed.activateIfBothJoined();
-        telemedRepository.save(telemed);
         return JoinResponse.from(telemed, role, WS_URL, DEFAULT_ICE, reservation);
     }
 
