@@ -10,6 +10,7 @@ import npng.handdoc.global.util.openai.OpenAIApiClient;
 import npng.handdoc.global.util.openai.dto.Message;
 import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.Sender;
+import npng.handdoc.telemed.dto.response.SpeechCandidateResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -83,7 +84,8 @@ public class OpenAIService {
         String json = openAIApiClient.chatToJson(messages).block();
 
         try{
-            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+            SpeechCandidateResponse response = objectMapper.readValue(json, SpeechCandidateResponse.class);
+            return response.candidates();
         } catch (Exception e) {
             throw new RuntimeException("OpenAI 후보 응답 파싱 실패: " + json, e);
         }
