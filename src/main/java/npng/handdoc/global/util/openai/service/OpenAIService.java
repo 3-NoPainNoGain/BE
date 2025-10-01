@@ -10,6 +10,7 @@ import npng.handdoc.global.util.openai.OpenAIApiClient;
 import npng.handdoc.global.util.openai.dto.Message;
 import npng.handdoc.telemed.domain.TelemedChatLog;
 import npng.handdoc.telemed.domain.type.Sender;
+import npng.handdoc.telemed.dto.response.SpeechCandidateResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -57,9 +58,8 @@ public class OpenAIService {
                 - 의미 보존: 원문 의미를 절대로 변경하지 마세요. 
                 - 과교정 금지: 문법/띄어쓰기/어휘를 '경미하게'만 수정하세요. 새로운 정보 추가나 삭제 절대 금지
                 - 불확실 시 보수적: 의미가 모호하면 원문을 후보에 포함하세요. 
-                - 출력: 반드시 JSON 문자열 배열 하나만 출력하세요.
-                - 예시: ["문장1", "문장2", "문장3"] 
-                - JSON 배열 외에는 어떤 설명도 하지 마세요. 
+                - 출력: 반드시 아래 '예시'의 JSON '객체'만 출력하세요. 
+                - 예시: {"candidates": ["문장1", "문장2", "문장3"]} 
                 """;
 
         // 사용자 프롬프트
@@ -72,7 +72,8 @@ public class OpenAIService {
         3) 2~3번 후보: 같은 의미의 자연스러운 '경미한 바꿔 말하기'(의미 동일, 정보 불변).
         4) 의미가 확실치 않으면 해당 후보는 원문을 그대로 사용.
 
-        출력은 오직 JSON 배열만 출력하세요.
+        오직 이 '객체'만 출력:
+        {"candidates": ["...", "...", "..."]}
         """.formatted(text);
 
         List<Message> messages = List.of(
@@ -83,7 +84,8 @@ public class OpenAIService {
         String json = openAIApiClient.chatToJson(messages).block();
 
         try{
-            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+            SpeechCandidateResponse response = objectMapper.readValue(json, SpeechCandidateResponse.class);
+            return response.candidates();
         } catch (Exception e) {
             throw new RuntimeException("OpenAI 후보 응답 파싱 실패: " + json, e);
         }
