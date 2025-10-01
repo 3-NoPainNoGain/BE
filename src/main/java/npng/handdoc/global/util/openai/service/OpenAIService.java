@@ -59,7 +59,7 @@ public class OpenAIService {
                 - 불확실 시 보수적: 의미가 모호하면 원문을 후보에 포함하세요. 
                 - 출력: 반드시 JSON 문자열 배열 하나만 출력하세요.
                 - 예시: ["문장1", "문장2", "문장3"] 
-                - JSON 배열 외에는 어떤 설명도 하지 마세요. 
+                - 반드시 JSON '배열'만 출력하세요. 다른 텍스트 금지. 
                 """;
 
         // 사용자 프롬프트
@@ -73,6 +73,7 @@ public class OpenAIService {
         4) 의미가 확실치 않으면 해당 후보는 원문을 그대로 사용.
 
         출력은 오직 JSON 배열만 출력하세요.
+        ["...", "...", "..."]
         """.formatted(text);
 
         List<Message> messages = List.of(
