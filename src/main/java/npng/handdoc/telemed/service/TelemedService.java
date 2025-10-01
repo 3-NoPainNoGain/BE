@@ -101,7 +101,7 @@ public class TelemedService {
         if (!telemed.getPatientId().equals(userId)) {
             throw new TelemedException(NOT_PARTICIPANT);
         }
-        TelemedChatLog chatLog = findTelmedChatLogOrElse(roomId);
+        TelemedChatLog chatLog = findTelemedChatLogOrElse(roomId);
         Summary summary = findSummaryOrElse(roomId);
         return HistoryDetailResponse.from(chatLog, summary);
     }
@@ -153,7 +153,7 @@ public class TelemedService {
         return telemedRepository.findById(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
     }
 
-    private TelemedChatLog findTelmedChatLogOrElse(String roomId) {
+    private TelemedChatLog findTelemedChatLogOrElse(String roomId) {
         return telemedChatRepository.findByRoomId(roomId).orElseThrow(()-> new TelemedException(ROOM_NOT_FOUND));
 
     }
