@@ -66,7 +66,8 @@ public class SecurityConfig {
                         "http://localhost:3000",
                         "https://handdoc.store",
                         "https://www.handdoc.store",
-                        "https://handdocfe.vercel.app")); // 추후에 추가
+                        "https://handdocfe.vercel.app",
+                        "https://ncp-contest19-fe.vercel.app")); // 추후에 추가
         configuration.setAllowedMethods(
                 Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(
