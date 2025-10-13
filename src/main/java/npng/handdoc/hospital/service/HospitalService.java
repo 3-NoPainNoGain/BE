@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import npng.handdoc.hospital.domain.Hospital;
 import npng.handdoc.hospital.domain.HospitalHour;
 import npng.handdoc.hospital.domain.type.Day;
+import npng.handdoc.hospital.dto.response.HospitalListResponse;
 import npng.handdoc.hospital.repository.HospitalRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -188,5 +189,11 @@ public class HospitalService {
         String dutyAddr = node.path("DUTYADDR").asText();
         boolean isHospitalOrClinic = "병원".equals(dutyDivNam) || "의원".equals(dutyDivNam);
         return isHospitalOrClinic && dutyAddr.contains("서대문구");
+    }
+
+    @Transactional(readOnly = true)
+    public HospitalListResponse findNearByHospitals(Double latitude, Double longitude, Double radiusKm){
+        List<Hospital> nearbyHospitals = hospitalRepository.findNearbyHospitals(longitude, latitude, radiusKm * 1000);
+        return HospitalListResponse.from(nearbyHospitals);
     }
 }
