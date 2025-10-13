@@ -28,6 +28,10 @@ openai:
   api:
     key: ${OPEN_API_KEY}
 
+public-data:
+  api:
+    url: http://openapi.seoul.go.kr:8088/${SEOUL_API_KEY}/json/TbHospitalInfo
+
 management:
   endpoint:
     health:
