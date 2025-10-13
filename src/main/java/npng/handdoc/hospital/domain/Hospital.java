@@ -45,4 +45,11 @@ public class Hospital extends BaseEntity {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public void updateDetails(String name, String address, Double latitude, Double longitude) {
+        this.name = name;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

@@ -34,7 +34,8 @@ public class HospitalHour extends BaseEntity {
     private LocalTime closeTime;
 
     @Builder
-    public HospitalHour(Day day, LocalTime openTime, LocalTime closeTime) {
+    public HospitalHour(Hospital hospital, Day day, LocalTime openTime, LocalTime closeTime) {
+        this.hospital = hospital;
         this.day = day;
         this.openTime = openTime;
         this.closeTime = closeTime;
