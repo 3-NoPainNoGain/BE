@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record HospitalListResponse(
-        List<HospitalItemResponse> hospitalItemResponseList,
+        List<HospitalItemResponse> hospitals,
         int count
 ) {
     public static HospitalListResponse from(List<Hospital> hospitalList){
