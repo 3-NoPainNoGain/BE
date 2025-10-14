@@ -69,12 +69,12 @@ public class HospitalService {
             for (JsonNode node : rows) {
                 // 필수 데이터 검증 (이름, 주소, 위/경도)
                 if (isInvalidNode(node)) {
-                    continue; // 필수 데이터가 없으면 이 데이터를 무시
+                    continue;
                 }
 
-                // 서비스 요구사항에 따른 필터링 (서대문구, 병원)
+                // 서비스 요구사항에 따른 필터링 (서대문구, 병원, 의원)
                 if (!isTargetHospital(node)) {
-                    continue; // 필터 조건에 맞지 않으면 무시
+                    continue;
                 }
 
                 String openapiId = node.path("HPID").asText();
@@ -101,7 +101,7 @@ public class HospitalService {
             log.info("신규 '서대문구' 병원 {}개를 DB에 저장했습니다.", hospitalsToSave.size());
         }
 
-        // 업데이트는
+        // 업데이트
         if (!existingHospitalsMap.isEmpty()) {
             hospitalRepository.deleteAll(existingHospitalsMap.values());
             log.warn("API에서 사라지거나 필터 조건에 맞지 않게 된 병원 {}개를 DB에서 삭제했습니다.", existingHospitalsMap.size());
@@ -175,8 +175,6 @@ public class HospitalService {
 
     // API 데이터 노드에 필수적인 정보가 비어있는지 검사
     private boolean isInvalidNode(JsonNode node) {
-        // asText()는 필드가 없으면 ""를 반환하므로 isBlank()로 체크
-        // asDouble()은 필드가 없거나 숫자가 아니면 0.0을 반환하므로 0.0인지 체크
         return node.path("DUTYNAME").asText().isBlank() ||
                 node.path("DUTYADDR").asText().isBlank() ||
                 node.path("WGS84LON").asDouble() == 0.0 ||

@@ -23,7 +23,7 @@ public class HospitalController {
         return ResponseEntity.ok(ApiResponse.EMPTY_RESPONSE);
     }
 
-    @Operation(summary = "위경도 기반 병원 데이터 조회 API", description = "위경도를 입력하여 근처의 병원을 조회합니다. 예시는 이화여자대학교입니다.")
+    @Operation(summary = "위경도 기반 병원 데이터 조회 API", description = "위경도와 반경을 입력하여 근처의 병원을 조회합니다.")
     @GetMapping("/nearby")
     public ResponseEntity<ApiResponse<Object>> nearbyHospitals(
             @RequestParam(value = "latitude", defaultValue = "37.5619") Double latitude,
