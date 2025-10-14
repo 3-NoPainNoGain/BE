@@ -34,6 +34,10 @@ management:
       probes:
         enabled: true
 
+public-data:
+  api:
+    url: http://openapi.seoul.go.kr:8088/${SEOUL_API_KEY}/json/TbHospitalInfo
+
 springdoc:
   api-docs:
     path: /v3/api-docs
