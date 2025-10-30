@@ -15,7 +15,6 @@ import npng.handdoc.user.domain.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -37,11 +36,9 @@ public class Reservation extends BaseEntity {
     @Column(name="status")
     private ReservationStatus status;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "reservation_interpretation", joinColumns = @JoinColumn(name = "reservation_id"))
-    @Column(name="interpretation_option")
     @Enumerated(EnumType.STRING)
-    private Set<Option> interpretationOption = new HashSet<>();
+    @Column(name = "interpretation_option")
+    private Option interpretationOption;
 
     @Column(name="description")
     private String description;
@@ -79,7 +76,7 @@ public class Reservation extends BaseEntity {
     }
 
     @Builder
-    public Reservation(User user, DoctorProfile doctor, ReservationStatus status, Symptom symptom, Long symptomDuration, Set<Option> interpretationOption, String description, LocalDate slotDate, LocalTime startTime, LocalTime endTime){
+    public Reservation(User user, DoctorProfile doctor, ReservationStatus status, Symptom symptom, Long symptomDuration, Option interpretationOption, String description, LocalDate slotDate, LocalTime startTime, LocalTime endTime){
         this.user = user;
         this.doctorProfile = doctor;
         this.status = status;
