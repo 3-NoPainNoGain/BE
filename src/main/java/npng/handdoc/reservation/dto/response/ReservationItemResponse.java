@@ -1,6 +1,7 @@
 package npng.handdoc.reservation.dto.response;
 
 import npng.handdoc.reservation.domain.Reservation;
+import npng.handdoc.reservation.domain.type.Option;
 import npng.handdoc.reservation.domain.type.ReservationStatus;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ public record ReservationItemResponse(
         Long patientId,
         Long doctorProfileId,
         ReservationStatus status,
+        Option interpretationOption,
         String symptom,
         String description,
         LocalDate slotDate,
@@ -23,6 +25,7 @@ public record ReservationItemResponse(
                 reservation.getUser().getId(),
                 reservation.getDoctorProfile().getId(),
                 reservation.getStatus(),
+                reservation.getInterpretationOption(),
                 reservation.getSymptom().getLabel(),
                 reservation.getDescription(),
                 reservation.getSlotDate(),
