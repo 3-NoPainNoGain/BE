@@ -14,7 +14,7 @@ public record ReservationDetailResponse(
         String residentId,
         String symptom,
         Long symptomDuration,
-        Option interpertationOption,
+        Option interpretationOption,
         ReservationStatus status,
         String description,
         String doctorName,
