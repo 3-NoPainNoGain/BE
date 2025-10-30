@@ -7,7 +7,6 @@ import npng.handdoc.reservation.domain.type.Symptom;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
 
 public record ReservationCreateRequest(
         @NotNull
@@ -36,6 +35,6 @@ public record ReservationCreateRequest(
         @Schema(description = "기타 증상", example = "머리가 어지러워요")
         String description,
 
-        @Schema(description = "통역 옵션", example = "[\"SIGN_TO_TEXT\",\"VOICE_TO_TEXT\"]")
-        Set<Option> interpretationOption
+        @Schema(description = "통역 옵션")
+        Option interpretationOption
 ) {}
