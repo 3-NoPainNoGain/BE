@@ -14,7 +14,7 @@ public record JoinResponse(
         DiagnosisStatus status,
         String wsUrl,
         List<IceServer> iceServers,
-        List<Option> interpretationOption) {
+        Option interpretationOption) {
 
     public static record IceServer(String urls){}
 
@@ -25,7 +25,7 @@ public record JoinResponse(
                 telemed.getDiagnosisStatus(),
                 wsUrl,
                 iceServers,
-                reservation.getInterpretationOption().stream().toList()
+                reservation.getInterpretationOption()
         );
     }
 }
