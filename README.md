@@ -1,13 +1,13 @@
-# 👩🏻‍💻 handDoc-BE
+# handDoc - BE 
+Spring Boot 기반의 백엔드 서버로, 사용자 인증, WebRTC 시그널링, 데이터 관리 등의 기능을 담당합니다.
 
-## ⚙️ Tech Stack 
-| 구분        | 사용 기술                                               |
-|------------|--------------------------------------------------------|
-| **Backend** | Java 17, Spring Boot, Spring Security, Spring Security, Spring JPA |
-| **Database** | MySQL, MongoDB, AWS RDS, MongoDB Atlas
-| **Infra**   | AWS EC2, Docker, Nginx     |
-| **DevOps**  | GitHub Actions                             |
-| **ETC**     | OpenAI API, Naver CLOVA Speech-to-Text API, 공공 데이터 포털 API  |
+## 🛠️ 기술 스택
+- 프레임워크 : Spring Boot, Spring Data JPA
+- 인증 : Spring Security, OAuth 2.0 
+- 배포 : AWS EC2, Docker, Nginx, AWS RDS, MongoDB Atlas
+- CI/CD : Github Actions 
+- 데이터베이스 : MySQL, MongoDB
+- 외부 API : OpenAI API, Naver CLOVA Speech-to-Text API, 공공 데이터 포털 API 
 
 
 ## 📌 ERD 
