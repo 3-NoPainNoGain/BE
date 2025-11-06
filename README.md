@@ -11,4 +11,4 @@ Spring Boot 기반의 백엔드 서버로, 사용자 인증, WebRTC 시그널링
 
 
 ## 📌 ERD 
-<img width="1900" height="962" alt="handDoc" src="https://github.com/user-attachments/assets/6a5fdcef-4bce-4c22-a1bc-f28bcaaa4ca4" />
+<img width="1000" height="600" alt="image" src="https://github.com/user-attachments/assets/9e2088db-a451-4cbc-bd83-2446df654f64" />
